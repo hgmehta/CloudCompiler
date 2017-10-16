@@ -1,5 +1,10 @@
 $(function(){
-	$('#btnSubmitCode').click(function(){
+	$('#btnSubmitCode').click(function(event){
+		event.preventDefault();
+	    $('html, body').animate({
+	        scrollTop: $("#compilation_result").offset().top
+	    }, 2000);
+
 		$.ajax({
 			url: '/postCode',
 			data: $('form').serialize(),

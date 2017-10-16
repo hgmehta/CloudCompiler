@@ -3,7 +3,7 @@ from flask import Flask, render_template, json, request
 
 app = Flask(__name__)
 
-compiler_url = 'http://localhost:5004'
+compiler_url = 'http://10.20.24.42:5004'
 
 @app.route('/master', methods=["POST","GET"])
 def master():

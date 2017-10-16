@@ -1,0 +1,150 @@
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Code Editor - Cloud Compiler</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="Preview page of Metronic Admin Theme #3 for  text editor implemented in javaScript for the browser" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/font-awesome/css/font-awesome.min.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/simple-line-icons/simple-line-icons.min.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap/css/bootstrap.min.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')}} rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/lib/codemirror.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/neat.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/ambiance.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/material.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/neo.css')}} rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href={{url_for('static',filename='Styles/Compiler/global/css/components-md.min.css')}} rel="stylesheet" id="style_components" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/global/css/plugins-md.min.css')}} rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/layout.min.css')}} rel="stylesheet" type="text/css" />
+        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/themes/default.min.css')}} rel="stylesheet" type="text/css" id="style_color" />
+        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/custom.min.css')}} rel="stylesheet" type="text/css" />
+</head>
+    <body class="page-container-bg-solid page-md">
+        <div class="page-wrapper">
+            <div class="page-wrapper-row full-height">
+                <div class="page-wrapper-middle">
+                    <!-- BEGIN CONTAINER -->
+                    <div class="page-container">
+                        <!-- BEGIN CONTENT -->
+                        <div class="page-content-wrapper">
+                            <!-- BEGIN CONTENT BODY -->
+                            <!-- BEGIN PAGE HEAD-->
+                            <div class="page-head">
+                                <div class="container">
+                                    <!-- BEGIN PAGE TITLE -->
+                                    <div class="page-title">
+                                        <h1>Code Editor
+                                        </h1>
+                                    </div>
+                                    <!-- END PAGE TITLE -->
+                                    <!-- BEGIN PAGE TOOLBAR -->
+                                    
+                                    <!-- END PAGE TOOLBAR -->
+                                </div>
+                            </div>
+                            <!-- END PAGE HEAD-->
+                            <!-- BEGIN PAGE CONTENT BODY -->
+                            <div class="page-content">
+                                <div class="container">
+                                    
+                                    <div class="page-content-inner">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <!-- BEGIN PORTLET-->
+                                                <form method="post" action={{ url_for('signUp') }}>
+                                                <div class="portlet light" style="width:939px;height:500px">
+                                                    <div class="portlet-title">
+                                                        <div class="caption">
+                                                            <i class="icon-social-dribbble font-dark"></i>
+                                                            <span class="caption-subject font-dark bold uppercase">Code Compiler</span>
+                                                            <h6 style="font-weight: bold;">
+                                                                Select language :-
+                                                                <select name="language">
+                                                                    <option value="java">Java</option>
+                                                                    <option value="c">C</option>
+                                                                    <option value="cpp">C++</option>
+                                                                    <option value="py">Python2.7</option>
+                                                                    <option value="py3">Python3</option>
+                                                                </select>
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="portlet-body">
+                                                        <textarea id="code_editor_demo_1" name="code">/*Write your java code here*/</textarea>
+                                                    </div>
+                                                    <input type="submit" name="submitcode" value="Save Code to Server">
+                                                </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END PAGE CONTENT INNER -->
+                                </div>
+                            </div>
+                            <!-- END PAGE CONTENT BODY -->
+                            <!-- END CONTENT BODY -->
+                        </div>
+                        <!-- END CONTENT -->
+                        <!-- BEGIN QUICK SIDEBAR -->
+                        <div>{{ output }}</div> 
+                        <a href="javascript:;" class="page-quick-sidebar-toggler">
+                            <i class="icon-login"></i>
+                        </a>
+                        
+                        <!-- END QUICK SIDEBAR -->
+                    </div>
+                    <!-- END CONTAINER -->
+                </div>
+            </div>
+            
+        </div>
+        <!-- BEGIN QUICK NAV -->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap/js/bootstrap.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/js.cookie.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery.blockui.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}} type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/lib/codemirror.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/javascript/javascript.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/htmlmixed/htmlmixed.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/css/css.js')}} type="text/javascript"></script>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/global/scripts/app.min.js')}} type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/pages/scripts/components-code-editors.min.js')}} type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/layout3/scripts/layout.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/layout3/scripts/demo.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/global/scripts/quick-sidebar.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/global/scripts/quick-nav.min.js')}} type="text/javascript"></script>
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <script>
+            $(document).ready(function()
+            {
+                $('#clickmewow').click(function()
+                {
+                    $('#radio1003').attr('checked', 'checked');
+                });
+            })
+        </script>
+<!-- End -->
+</body>
+</html>
