@@ -8,19 +8,44 @@ compiler_url = 'http://10.20.24.42:5004'
 @app.route('/master', methods=["POST","GET"])
 def master():
     jsonRes = request.get_json()
-    code = jsonRes['code']
-    language = jsonRes['language']
-    inp = jsonRes['input']
+    _type = jsonRes['type']
 
-    userID = '123'
-    filename = 'example'
-    language = str(language.decode('utf-8'))
-    code = str(code.decode('utf-8'))
-    inp = str(inp.decode('utf-8'))
+    if _type=="compile":
+        code = jsonRes['code']
+        language = jsonRes['language']
+        inp = jsonRes['input']
+        username = jsonRes['username']
+        filename = 'example'
 
-    r = requests.post(compiler_url+'/compile', data=json.dumps({'getCode':code, 'type':language, 'input':inp, 'userid':userID,'filename':filename}), \
-    											headers={'Content-Type' : 'application/json'})
-    print str(r.text)
+        language = str(language.decode('utf-8'))
+        code = str(code.decode('utf-8'))
+        inp = str(inp.decode('utf-8'))
+
+        r = requests.post(compiler_url+'/compile', data=json.dumps({'getCode':code, \
+                                                                    'type':language, \
+                                                                    'input':inp, \
+                                                                    'userid':username, \
+                                                                    'filename':filename}), \
+                                                                    headers={'Content-Type' : 'application/json'})
+        print str(r.text)
+    else:
+        code = jsonRes['code']
+        language = jsonRes['language']
+        inp = jsonRes['input']
+        username = jsonRes['username']
+        filename = 'example'
+
+        language = str(language.decode('utf-8'))
+        code = str(code.decode('utf-8'))
+        inp = str(inp.decode('utf-8'))
+
+        r = requests.post(compiler_url+'/compile', data=json.dumps({'getCode':code, \
+                                                                    'type':language, \
+                                                                    'input':inp, \
+                                                                    'userid':username, \
+                                                                    'filename':filename}), \
+                                                                    headers={'Content-Type' : 'application/json'})
+        print str(r.text)
 
     return str(r.text)
 

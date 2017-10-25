@@ -1,0 +1,278 @@
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+			<title>urban admin ui kit html</title>
+			<meta name="description" content="">
+				<meta name="viewport" content="width=device-width">
+
+					<link rel="shortcut icon" href="http://urban.nyasha.me/favicon.ec0f3a1b.ico">
+					<link rel="stylesheet" href={{url_for('static',filename='Styles/editor/css/app.min.df5e9cc9.css')}}>
+
+					<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css" />
+					<link href={{url_for('static',filename='Styles/Compiler/global/plugins/font-awesome/css/font-awesome.min.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/simple-line-icons/simple-line-icons.min.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap/css/bootstrap.min.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')}} rel="stylesheet" type="text/css" />
+			        <!-- END GLOBAL MANDATORY STYLES -->
+			        <!-- BEGIN PAGE LEVEL PLUGINS -->
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/lib/codemirror.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/neat.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/ambiance.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/material.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/theme/neo.css')}} rel="stylesheet" type="text/css" />
+			        <!-- END PAGE LEVEL PLUGINS -->
+			        <!-- BEGIN THEME GLOBAL STYLES -->
+			        <link href={{url_for('static',filename='Styles/Compiler/global/css/components-md.min.css')}} rel="stylesheet" id="style_components" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/global/css/plugins-md.min.css')}} rel="stylesheet" type="text/css" />
+			        <!-- END THEME GLOBAL STYLES -->
+			        <!-- BEGIN THEME LAYOUT STYLES -->
+			        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/layout.min.css')}} rel="stylesheet" type="text/css" />
+			        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/themes/default.min.css')}} rel="stylesheet" type="text/css" id="style_color" />
+			        <link href={{url_for('static',filename='Styles/Compiler/layouts/layout3/css/custom.min.css')}} rel="stylesheet" type="text/css" />
+							<body>
+
+								<!-- Code for popup for taking the name of the file as an input from the user. -->
+
+								<!-- Button to trigger modal -->
+	
+								<!-- Modal 
+								<div class="modal fade" id="modalForm" role="dialog">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<!-- Modal Header 
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal">
+													<span aria-hidden="true">&times;</span>
+													<span class="sr-only">Close</span>
+												</button>
+												<h4 class="modal-title" id="myModalLabel">Contact Form</h4>
+											</div>
+											
+											<!-- Modal Body 
+											<div class="modal-body">
+												<p class="statusMsg"></p>
+												<form method="post" action={{ url_for('submit') }}>
+													<div class="form-group">
+														<label for="filename">FileName:</label>
+														<input type="text" class="form-control" name="filename" placeholder="Please enter the name of the file:"/>
+													</div>
+													<!-- Modal Footer 
+													<div class="modal-footer">
+															<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+															<button type="submit" class="btn btn-primary submitBtn" >Save</button>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							-->
+
+								<div class="app layout-fixed-header">
+									<div class="sidebar-panel offscreen-left">
+										<div class="brand">
+											<div class="brand-logo">
+												<!--img src="images/logo.c5cdf202.png" height="15" alt=""-->
+												</div>
+												<a href="javascript:;" class="toggle-sidebar hidden-xs hamburger-icon v3" data-toggle="layout-small-menu">
+													<span></span>
+													<span></span>
+													<span></span>
+													<span></span>
+												</a>
+											</div>
+											<nav role="navigation">
+												<ul class="nav">
+													<li>
+														<a href="index.html">
+															<i class="fa fa-flask"></i>
+															<span>Dashboard</span>
+														</a>
+													</li>
+													<li>
+														<a href="widgets.html">
+															<i class="fa fa-toggle-on"></i>
+															<span>Files</span>
+														</a>
+													</li>
+													<li>
+														<a href="widgets.html">
+															<i class="fa fa-toggle-on"></i>
+															<span>Code Editor</span>
+														</a>
+													</li>
+												</ul>
+											</nav>
+										</div>
+										<div class="main-panel">
+											<header class="header navbar">
+												<div class="brand visible-xs">
+													<div class="toggle-offscreen">
+														<a href="#" class="hamburger-icon visible-xs" data-toggle="offscreen" data-move="ltr">
+															<span></span>
+															<span></span>
+															<span></span>
+														</a>
+													</div>
+													<div class="brand-logo">
+														<!--img src="images/logo-dark.5ba260bb.png" height="15" alt=""-->
+														</div>
+														<div class="toggle-chat">
+															
+														</div>
+													</div>
+													<ul class="nav navbar-nav hidden-xs">
+														<li>														
+														<p class="navbar-text caption-subject font-dark bold uppercase">Code Editor</p>
+														</li>
+													</ul>
+													<ul class="nav navbar-nav navbar-right hidden-xs">
+																<li>
+																		<a href="" data-toggle="dropdown">
+																		<!--img src=images/avatar.21d1cc35.jpg class="header-avatar img-circle ml10" alt=user title=user-->
+																			<span class="pull-left">{{ username }}</span>
+																		</a>
+																		<ul class="dropdown-menu">
+																			<li>
+																				<a href="javascript:;">View Profile</a>
+																			</li>
+																			<li>
+																				<a href="javascript:;">Change Password</a>
+																			</li>
+																			<li>
+																				<a href="javascript:;">Help</a>
+																			</li>
+																			<li>
+																				<a href="signin.html">Logout</a>
+																			</li>
+																		</ul>
+																	</li>
+																</ul>
+															</header>
+															<div class="main-content">
+																<div class="row">
+																	<div class="col-md-12">
+																		<!-- BEGIN PORTLET-->
+																		<form method="post" action={{ url_for('submit') }}>
+																		<div class="col-md-12 portlet light">
+																		<div class="row">
+																			<div class="col-md-3 portlet-title">
+																				<div class="caption">
+																					
+																					<h6 style="font-weight: bold;">
+																						Select language :-
+																						<select name="language">
+																							{% for lang in languages %}
+																								{% if lang[0] == language %}
+																									<option value={{lang[1]}} selected>{{lang[0]}}</option>
+																								{% endif %}
+																								<option value={{lang[1]}}>{{lang[0]}}</option>
+																							{% endfor %}
+																						</select>
+																					</h6>
+																				</div>
+																			</div>
+																			<div class="col-md-9"><div class="row"> FileName:</span> <input type="text" class="form-control" name="filename" placeholder="Please enter the name of the file:"/></div></div>
+																		</div>
+																			<div class="portlet-body">
+																				<textarea id="code_editor_demo_1" name="code">{{ code }}</textarea>
+																			</div><br>
+																			<div class="row">
+																				<div class = "col-md-6">
+																					<span>Input:</span>
+																					<div class="portlet-body">
+																							<textarea style="resize:none; height:152px; width:400px; background-color: #202020; color: white" id="code_editor_demo_1" name="input">{{ input }}</textarea>
+																					</div><br>
+																				</div>
+																				<div class = "col-md-6">
+																					<span>Output:</span>
+																					<div class="portlet-body">
+																								<textarea style="resize:none; height:152px; width:400px; background-color: #202020; color: white" id="code_editor_demo_1" name="output" readonly>{{ output }}</textarea>
+																					</div><br>
+																				</div>
+																			</div>
+																			<button type="submit" name="compile" value="compile" class="btn btn-success">Compile and Run</button>
+																			<button type="submit" name="save" value="save" class="btn btn-success">Save</button>
+																		</div>
+																		</form>
+																		<!--button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalForm" >Save</button -->
+																	</div>
+																</div>
+
+															</div>
+														</div>
+														<footer class="content-footer">
+															<nav class="footer-right">
+																<ul class="nav">
+																	<li>
+																		<a href="javascript:;">Feedback</a>
+																	</li>
+																	<li>
+																		<a href="javascript:;" class="scroll-up">
+																			<i class="fa fa-angle-up"></i>
+																		</a>
+																	</li>
+																</ul>
+															</nav>
+															<nav class="footer-left">
+																<ul class="nav">
+																	<li>
+																		<a href="javascript:;">Copyright 
+																			<i class="fa fa-copyright"></i>
+																			<span>Urban</span> 2015. All rights reserved
+																		</a>
+																	</li>
+																	<li>
+																		<a href="javascript:;">Careers</a>
+																	</li>
+																	<li>
+																		<a href="javascript:;"> Privacy Policy </a>
+																	</li>
+																</ul>
+															</nav>
+														</footer>
+																			</div>
+	<script src={{url_for('static',filename='Styles/editor/script/app.min.4fc8dd6e.js')}}></script>
+	
+	<script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap/js/bootstrap.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/js.cookie.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/jquery.blockui.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}} type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/lib/codemirror.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/javascript/javascript.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/htmlmixed/htmlmixed.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/global/plugins/codemirror/mode/css/css.js')}} type="text/javascript"></script>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/global/scripts/app.min.js')}} type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/pages/scripts/components-code-editors.min.js')}} type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/layout3/scripts/layout.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/layout3/scripts/demo.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/global/scripts/quick-sidebar.min.js')}} type="text/javascript"></script>
+        <script src={{url_for('static',filename='Styles/Compiler/layouts/global/scripts/quick-nav.min.js')}} type="text/javascript"></script>
+	<script type="text/javascript">
+	
+/* 
+																				<![CDATA[ */
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-50530436-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+(function(b){(function(a){"__CF"in b&&"DJS"in b.__CF?b.__CF.DJS.push(a):"addEventListener"in b?b.addEventListener("load",a,!1):b.attachEvent("onload",a)})(function(){"FB"in b&&"Event"in FB&&"subscribe"in FB.Event&&(FB.Event.subscribe("edge.create",function(a){_gaq.push(["_trackSocial","facebook","like",a])}),FB.Event.subscribe("edge.remove",function(a){_gaq.push(["_trackSocial","facebook","unlike",a])}),FB.Event.subscribe("message.send",function(a){_gaq.push(["_trackSocial","facebook","send",a])}));"twttr"in b&&"events"in twttr&&"bind"in twttr.events&&twttr.events.bind("tweet",function(a){if(a){var b;if(a.target&&a.target.nodeName=="IFRAME")a:{if(a=a.target.src){a=a.split("#")[0].match(/[^?=&]+=([^&]*)?/g);b=0;for(var c;c=a[b];++b)if(c.indexOf("url")===0){b=unescape(c.split("=")[1]);break a}}b=void 0}_gaq.push(["_trackSocial","twitter","tweet",b])}})})})(window);
+/* ]]> */
+
+																			</script>

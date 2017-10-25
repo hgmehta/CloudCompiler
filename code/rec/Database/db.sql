@@ -23,9 +23,34 @@ CREATE TABLE forgotPassword(
     FOREIGN KEY (email) REFERENCES users(email) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE TABLE repository(
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    filename VARCHAR(25) NOT NULL,
+    username VARCHAR(15) NOT NULL,
+    fileType VARCHAR(10) NOT NULL,
+    timeCreated TIMESTAMP NOT NULL DEFAULT now(),
+    pcid INT NOT NULL,
+    FOREIGN KEY (username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (pcid) REFERENCES pcip(pcid) ON DELETE RESTRICT ON UPDATE CASCADE,
+	FOREIGN KEY (fileType) REFERENCES languages(extension) ON DELETE RESTRICT ON UPDATE CASCADE    
+);
+
+CREATE TABLE languages(
+    
+    VARCHAR(10) NOT NULL PRIMARY KEY,
+    extension VARCHAR(10) NOT NULL UNIQUE KEY
+);
+
+CREATE TABLE pcip(
+	pcid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    ip VARCHAR(20)  NOT NULL UNIQUE KEY    
+);
+
 INSERT INTO users (email,username,password) VALUES('harshmehta87.1997.hm@gmail.com','hgmehta','12345');
 SELECT * FROM users;
 SELECT * FROM forgotPassword;
 DELETE FROM `cloudcompiler`.`users` WHERE `username`='harshmehta';
+SELECT * FROM languages;
+SELECT * FROM pcip;
 
 -- UPDATE forgotPassword SET isLinkActive = '0', isPasswordChanged = '1', timeChanged = '2017-10-07 17:49:41.312178' WHERE email = 'harsh_m@hotmail.com' AND password_key = '7ad05a93993e860da600d797e627e833155b3219af223e7a346eeeb738fcfc23';

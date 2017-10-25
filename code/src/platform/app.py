@@ -23,21 +23,70 @@ def createHTMLString(string):
     string = string.replace("\r\n", "<br />")
     return string.replace("\n", "<br />")
 
-@app.route('/Submit',methods=['POST','GET'])
-def signUp():
+@app.route('/compile',methods=['POST','GET'])
+def compile():
     _code = request.form['code']
     _language = request.form['language']
-    #_input = request.form['input']
-    _input = ""
-    # validate the received values
-    print _code
-    print _language
-    print _input
+    _input = request.form['input']
+    _username = 'guest'
+    if 'username' in session:
+        _username = session['username']
 
-    r = requests.post(master_url+'/master', data=json.dumps({'code':_code, 'language':_language, 'input':_input}), headers={'Content-Type' : 'application/json'})
+    r = requests.post(master_url+'/master', data=json.dumps({'type':'compile', \
+                                                            'code':_code, \
+                                                            'language':_language, \
+                                                            'username': _username, \
+                                                            'input':_input}), headers={'Content-Type' : 'application/json'})
     responce = str(r.text)
-    return render_template('CodeEditor.html',output = responce)
+    languages = retriveLanguages()
+    return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = responce, code = _code, input = _input, language = _language)
+
+@app.route('/savefile',methods=['POST','GET'])
+def savefile():
+    _pcip = "10.20.24.42"
+    _code = request.form['code']
+    _language = request.form['language']
+    _input = request.form['input']
+    _filename = "temp"
+    _username = session['username']
+    _pcid = getPcidFromIP(_pcip)
+    # validate the received values
+
+    r = requests.post(master_url+'/master', data=json.dumps({'type': 'savefile', \
+                                                            'code': _code,\
+                                                            'language': _language, \
+                                                            'input': _input}), \
+                                                            'filname': _filename, \
+                                                            'username': _username, \
+                                                            headers={'Content-Type' : 'application/json'})
+    responce = str(r.text)
+    languages = retriveLanguages()
+    return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = responce, code = _code, input = _input, language = _language)
     #return json.dumps({'compilation_res':createHTMLString(responce)})
+
+def getPcidFromIP(ip):
+    pcid = 1
+    query = "SELECT pcid FROM pcip WHERE ip = %s"
+    values = (ip)
+    try:
+        conn = mysql.connector.connect(host='localhost',
+                                        port='3306',
+                                        database='cloudcompiler',
+                                        user='root',
+                                        password='lab@cc2')
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute(query, values)
+            rows = cursor.fetchone()
+            for row in rows:
+                pcid = int(row)
+    except Error as error:
+        print(error)
+
+    finally:
+        cursor.close()
+        conn.close()
+    return pcid
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -75,7 +124,8 @@ def logged_in(username):
         if session['username'] != username:
             return render_template('404.html', error = "Sorry", h1tag_msg = msg)
         elif session['username'] == username:
-            return render_template('CodeEditor.html')
+            languages = retriveLanguages()
+            return render_template('_CodeEditor.html',username = session['username'],languages = languages)
     else:
         return redirect("http://localhost:8080/", code=302)
 
@@ -219,6 +269,27 @@ def change_password():
         else:
             msg = "Somthing thing went wrong. Please try again."
             return render_template('404.html', error = "Sorry", h1tag_msg = msg)
+
+def retriveLanguages():
+    languages = []
+    try:
+        conn = mysql.connector.connect(host='localhost',
+                                       port='3306',
+                                       database='cloudcompiler',
+                                       user='root',
+                                       password='lab@cc2')
+        if conn.is_connected():
+            cursor = conn.cursor();
+            cursor.execute("SELECT * FROM languages")
+            languages = cursor.fetchall()
+
+    except Error as e:
+        print(e)
+
+    finally:
+        conn.close()
+
+    return languages
 
 if __name__ == "__main__":
     app.run(host = '0.0.0.0', port=8080)
