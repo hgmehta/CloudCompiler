@@ -34,6 +34,7 @@ def perform():
     elif "save" in request.form:
         return redirect("http://localhost:8080/savefile",code = 307)
 
+@app.route('/compile', methods = ['GET','POST'])
 def compile(_code, _language, _username, _input):
     r = requests.post(master_url+'/master', data=json.dumps({'type':'compile', \
                                                             'code':_code, \
@@ -121,7 +122,7 @@ def filemanager(username,filetype):
             cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s", (session['username'],filetype_decoded,))
             rows = cursor.fetchall()
             rows = [list(i) for i in rows]
-
+            print rows
             return render_template('FileManager.html',username = session['username'], links = rows)
 
 def getPcidFromIP(ip):

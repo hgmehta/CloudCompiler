@@ -58,138 +58,14 @@
 
     
 
-        <aside id="aside" class="aside aside-left" data-fuse-bar="aside" data-fuse-bar-media-step="md" data-fuse-bar-position="left">
-                <div class="aside-content-wrapper">
-            
-                    <div class="aside-content bg-primary-500 text-auto">
-            
-                        <div class="aside-toolbar">
-            
-                            <div class="logo">
-                                <span class="logo-icon">F</span><span class="logo-text">FUSE</span>
-                            </div>
-            
-                            <button id="toggle-fold-aside-button" type="button" class="btn btn-icon d-none d-lg-block"
-                                    data-fuse-aside-toggle-fold>
-                                <i class="icon icon-backburger"></i>
-                            </button>
-            
-                        </div>
-            
-                        <ul class="nav flex-column custom-scrollbar" id="sidenav" data-children=".nav-item">
-                            <li class="subheader">
-                                <span>APPS</span>
-                            </li>                           
-            
-                            <li class="nav-item">
-                                <a class="nav-link ripple " href="http://localhost:8080/{{username}}/dashboard"
-                                data-page-url="/apps-file-manager.html">
-                                    <i class="icon s-4 icon-account-box"></i>
-                                    <span>Dashboard</span>
-                                </a>
-                            </li>
-            
-                            <li class="nav-item">
-                                <a class="nav-link ripple active" href="http://localhost:8080/{{username}}/files"
-                                    data-page-url="/apps-file-manager.html">
-                                    <i class="icon s-4 icon-folder"></i>
-                                    <span>Files</span>
-                                </a>
-                            </li>
-            
-                            <li class="nav-item">
-                                <a class="nav-link ripple " href="http://localhost:8080/{{username}}/codeeditor"
-                                data-page-url="/apps-file-manager.html">
-                                    <i class="icon s-4 icon-checkbox-marked"></i>
-                                    <span>Code Editor</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </aside>
+        {% include 'aside.html' %}
 
     
 
     <div class="content-wrapper">
 
-        
-            <nav id="toolbar" class="fixed-top bg-white">
-
-    <div class="row no-gutters align-items-center flex-nowrap">
-
-        <div class="col">
-
-            <div class="row no-gutters align-items-center flex-nowrap">
-
-                
-
-                    <button type="button" class="toggle-aside-button btn btn-icon d-block d-lg-none"
-                            data-fuse-bar-toggle="aside">
-                        <i class="icon icon-menu"></i>
-                    </button>
-
-                    <div class="toolbar-separator d-block d-lg-none"></div>
-
-                <div class="toolbar-separator"></div>
-
-            </div>
-        </div>
-
-        <div class="col-auto">
-
-            <div class="row no-gutters align-items-center justify-content-end">
-
-                <div class="user-menu-button dropdown">
-
-                    <div class="dropdown-toggle ripple row align-items-center no-gutters px-2 px-sm-4" role="button"
-                         id="dropdownUserMenu"
-                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <div class="avatar-wrapper">
-                            <img class="avatar" src="../assets/images/avatars/profile.jpg">
-                            <i class="status text-green icon-checkbox-marked-circle s-4"></i>
-                        </div>
-                        <span class="username mx-3 d-none d-md-block">{{username}}</span>
-                    </div>
-
-                    <div class="dropdown-menu" aria-labelledby="dropdownUserMenu">
-
-                        <a class="dropdown-item" href="#">
-                            <div class="row no-gutters align-items-center flex-nowrap">
-                                <i class="icon-account"></i>
-                                <span class="px-3">My Profile</span>
-                            </div>
-                        </a>
-
-                        <a class="dropdown-item" href="#">
-                            <div class="row no-gutters align-items-center flex-nowrap">
-                                <i class="icon-email"></i>
-                                <span class="px-3">Inbox</span>
-                            </div>
-                        </a>
-
-                        <a class="dropdown-item" href="#">
-                            <div class="row no-gutters align-items-center flex-nowrap">
-                                <i class="status text-green icon-checkbox-marked-circle"></i>
-                                <span class="px-3">Online</span>
-                            </div>
-                        </a>
-
-                        <div class="dropdown-divider"></div>
-
-                        <a class="dropdown-item" href="http://localhost:8080/{{username}}/logout">
-                            <div class="row no-gutters align-items-center flex-nowrap">
-                                <i class="icon-logout"></i>
-                                <span class="px-3">Logout</span>
-                            </div>
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+        {% include 'header.html' %}
+            
         
 
 <div class="content">
