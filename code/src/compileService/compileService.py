@@ -1,5 +1,6 @@
+import shutil
 from flask import Flask, request
-from saveFile import savefile
+from saveFile import saveFILE
 from compileCode import getCompile
 
 app = Flask(__name__)
@@ -20,8 +21,9 @@ def compile():
     filename = str(filename.decode('utf-8'))
     inp = str(inp.decode('utf-8'))
 
-    getpath = savefile(code, lan, userID, filename, inp)
+    getpath = saveFILE(code, lan, userID, filename, inp)
     output = str(getCompile(getpath,lan, timeout))
+    shutil.rmtree('../compile/'+str(userID))
     print output
     return output
 

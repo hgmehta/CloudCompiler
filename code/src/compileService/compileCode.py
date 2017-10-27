@@ -1,5 +1,5 @@
 from multiprocessing import Process, Queue
-import os
+import os,signal
 import commands
 import time
 
@@ -60,10 +60,12 @@ def compile(path, fname, exe, lan, timeout):
 
 		if p1.is_alive():
 			checkoutput = "Terminated due to timeout"
-			p1.terminate()
+			os.kill(p1.pid,signal.SIGKILL)
+			#p1.terminate()
+			#p2.terminate()
 		else:
 			checkoutput = q.get()
-			p2.terminate()
+			os.kill(p2.pid,signal.SIGKILL)
 		return checkoutput
 	else:
 		return compilation_status
@@ -73,5 +75,5 @@ def getCompile(filename, lan, timeout):
 	return compile(path, file, exe, lan, timeout)
 
 if __name__=="__main__":
-	filename="../repository/123/java/example.java"
+	filename="../compile/123/java/example.java"
 	print getCompile(filename, 'java', 10)
