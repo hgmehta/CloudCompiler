@@ -9,6 +9,9 @@ def validateRegistration(email,username,password,confirmpassword):
         errors.append("Username is already registered")
     return errors
 
+def createConnection():
+    return mysql.connector.connect(host='localhost', port='3306', database='cloudcompiler', user='root', password='lab@cc2')
+
 def validateLogin(email,password):
     errors = []
     isMatched = 0
@@ -20,11 +23,7 @@ def validateLogin(email,password):
         query = "SELECT COUNT(email) FROM users WHERE email = %s AND password = %s"
         values = (email,password)
         try:
-            conn = mysql.connector.connect(host='localhost',
-                                           port='3306',
-                                           database='cloudcompiler',
-                                           user='root',
-                                           password='lab@cc2')
+            conn = createConnection()
             if conn.is_connected():
                 cursor = conn.cursor()
                 cursor.execute(query, values)
@@ -48,11 +47,7 @@ def register(email,username,password,key):
     values = (email,username,password,key)
     isSuccess = True
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn =createConnection()
         if conn.is_connected():
             cursor = conn.cursor()
             cursor.execute(query, values)
@@ -72,11 +67,7 @@ def isRegistered(dbfield, formcontent):
     registered = False
     noOfUsers = 0
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT COUNT(" + dbfield + ") FROM users WHERE " + dbfield +" = %s", (formcontent,))
@@ -99,11 +90,7 @@ def isRegistered(dbfield, formcontent):
 def getActivationKey(email):
     key = ""
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT activation_key FROM users WHERE email = %s", (email,))
@@ -121,11 +108,7 @@ def getActivationKey(email):
 
 def activateEmail(email):
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("UPDATE users SET isEmailVerified = '1' WHERE email = %s", (email,))
@@ -141,11 +124,7 @@ def activateEmail(email):
 def isAccountVarified(email):
     isVarified = 0
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT isEmailVerified FROM users WHERE email = %s", (email,))
@@ -164,11 +143,7 @@ def isAccountVarified(email):
 
 def forgotPasswordDetails(email, key):
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         query = "INSERT INTO forgotPassword(email,password_key) VALUES(%s,%s)"
         values = (email, key)
         if conn.is_connected():
@@ -185,11 +160,7 @@ def forgotPasswordDetails(email, key):
 def getKeyForChangePassword(email):
     key = ""
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT password_key FROM forgotPassword WHERE email = %s", (email,))
@@ -208,11 +179,7 @@ def getKeyForChangePassword(email):
 def isKeyExpired(email):
     isKeyExpired = 0;
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT isLinkActive FROM forgotPassword WHERE email = %s", (email,))
@@ -232,11 +199,7 @@ def isKeyExpired(email):
 def changePassword(email, password, key):
     time = str(datetime.datetime.now())
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("UPDATE forgotPassword SET isLinkActive = '0', isPasswordChanged = '1',"\
@@ -255,11 +218,7 @@ def getUsernameFromEmail(email):
     username = ""
 
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
+        conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
             cursor.execute("SELECT username FROM users WHERE email = %s", (email,))
