@@ -82,16 +82,18 @@
                                     {% if row[2] == 'Folder'%}
                                         <td class="file-icon">
                                             <i class="icon-folder"></i>
-                                        </td>    
+                                        </td>
+                                        <td class="name"><a href="http://localhost:8080/{{username}}/files/{{row[1]}}">{{row[0]}}</a></td>    
                                     {% endif %}
                                     {% if row[2] != 'Folder' %}
                                     <td class="file-icon">
                                         <!--i class="icon-folder"></i-->
                                         <img src="/static/{{row[6]}}"> </img>
                                     </td>
+                                    <td class="name"><a href="http://localhost:8080/{{username}}/codeeditor?file={{row[1]}}&type={{row[2]}}">{{row[0]}}</a></td>
                                     {% endif %}
 
-                                    <td class="name"><a href="http://localhost:8080/{{username}}/files/{{row[1]}}">{{row[0]}}</a></td>
+                                    
                                     <td class="type d-none d-md-table-cell">{{row[2]}}</td>
                                     <td class="owner d-none d-sm-table-cell">{{row[3]}}</td>
                                     <td class="size d-none d-sm-table-cell">{{row[4]}}</td>

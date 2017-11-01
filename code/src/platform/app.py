@@ -24,8 +24,11 @@ def main():
 @app.route('/guest', methods=['GET','POST'])
 def guestcompiler():
     if request.method == 'GET':
-        languages = retriveLanguages()
-        return render_template('_CodeEditor.html',username = 'guest', languages = languages)
+        if 'username' in session:
+            return redirect("http://localhost:8080/" + session['username'] + "/codeeditor",code = 302)
+        else:
+            languages = retriveLanguages()
+            return render_template('_CodeEditor.html',username = 'guest', languages = languages)
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
@@ -52,7 +55,6 @@ def perform():
 @app.route('/<username>/files/<filetype>')
 def filemanager(username,filetype):
     rows = []
-    print filetype
     if filetype=="None":
         conn = createConnection()
         try:
@@ -82,7 +84,6 @@ def filemanager(username,filetype):
             cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s", (session['username'],filetype_decoded,))
             rows = cursor.fetchall()
             rows = [list(i) for i in rows]
-            print rows
             return render_template('FileManager.html',username = session['username'], links = rows)
 
 @app.route('/login', methods = ['GET','POST'])
@@ -107,15 +108,23 @@ def login():
 @app.route('/<username>/codeeditor',methods = ['GET','POST'])
 def logged_in(username):
     if request.method == 'GET':
-        msg = "Page not found.!"
-        if 'username' in session:
-            if session['username'] != username:
-                return render_template('404.html', error = "Sorry", h1tag_msg = msg)
-            elif session['username'] == username:
-                languages = retriveLanguages()
-                return render_template('_CodeEditor.html',username = session['username'],languages = languages)
+        filename = request.args.get('file')
+        filetype = request.args.get('type')
+
+        if filename is None or filetype is None:
+            msg = "Page not found.!"
+            if 'username' in session:
+                if session['username'] != username:
+                    return render_template('404.html', error = "Sorry", h1tag_msg = msg)
+                elif session['username'] == username:
+                    languages = retriveLanguages()
+                    return render_template('_CodeEditor.html',username = session['username'],languages = languages)
+            else:
+                return redirect("http://localhost:8080/", code=302)
         else:
-            return redirect("http://localhost:8080/", code=302)
+            code = readfile(filetype,session['username'],base64.b64decode(filename))
+            languages = retriveLanguages()
+            return render_template('_CodeEditor.html',language = filetype,code = code,username = session['username'],languages = languages)
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
@@ -145,9 +154,8 @@ def dashboard(username):
     else:
         return redirect("http://localhost:8080/", code=302)
 
-
 def compile(_code, _language, _username, _input):
-    r = requests.post(master_url+'/master', data=json.dumps({'type':'compile', \
+    r = requests.post(master_url+'/master', data=json.dumps({'action':'compile', \
                                                             'code':_code, \
                                                             'language':_language, \
                                                             'username': _username, \
@@ -156,8 +164,15 @@ def compile(_code, _language, _username, _input):
     languages = retriveLanguages()
     return responce, languages
 
+def readfile(_language, _username, _filename):
+    r = requests.post(master_url+'/master', data=json.dumps({'action':'read', \
+                                                            'language':_language, \
+                                                            'username': _username, \
+                                                            'filename':_filename}), headers={'Content-Type' : 'application/json'})
+    return str(r.text)
+
 def savefile(_code,_language,_input,_filename,_username):
-    r = requests.post(master_url+'/master', data=json.dumps({'type': 'savefile', \
+    r = requests.post(master_url+'/master', data=json.dumps({'action': 'savefile', \
                                                             'code': _code,\
                                                             'language': _language, \
                                                             'input': _input, \

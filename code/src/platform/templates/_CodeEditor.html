@@ -93,7 +93,7 @@
                         <select name="language">
                                 <option value="none" selected>Select Language</option>
                             {% for lang in languages %}
-                                {% if lang[0] == language %}
+                                {% if lang[1] == language %}
                                     <option value={{lang[1]}} selected>{{lang[0]}}</option>
                                 {% endif %}
                                 <option value={{lang[1]}}>{{lang[0]}}</option>
