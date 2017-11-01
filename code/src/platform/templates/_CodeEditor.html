@@ -12,7 +12,7 @@
         <meta charset="UTF-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>Blank</title>
+        <title>Code Editor - Code Manager</title>
 
         <!-- STYLESHEETS -->
         <style type="text/css">
@@ -53,13 +53,13 @@
 
         
         
-
-<div id="wrapper">
-
+{% if username != 'guest' %}
+    <div id="wrapper">
+{% endif %}
     
-
+    {% if username != 'guest' %}
         {% include 'aside.html' %}
-
+    {% endif %}
     
 
     <div class="content-wrapper">
@@ -69,9 +69,19 @@
         
 
 <div class="content">
-    <div class="doc cards-doc page-layout blank full-width p-5">
+    {% if username != 'guest' %}
+        <div class="doc cards-doc page-layout blank full-width p-5">
+    {% endif %}
+    {% if username == 'guest' %}
+        <div class="doc cards-doc page-layout blank full-width px-40 pt-30">
+    {% endif %}
             <div class="col-12">
-                <form method = "post" action="http://localhost:8080/{{username}}/codeeditor">
+                {% if username != 'guest' %}
+                    <form method = "post" action="http://localhost:8080/{{username}}/codeeditor">
+                {% endif %}
+                {% if username == 'guest' %}
+                    <form method = "post" action="">
+                {% endif %}
                 <div class="example">
                     <div class="description">
                         <div class="description-text">
@@ -90,15 +100,17 @@
                             {% endfor %}
                         </select>
                     </h6>
+                    {% if username != 'guest' %}
                     <div class="col-md-4">
                         <div class="row">
                             <p class="col-md-3 mt-3">File Name: </p>
                             <input type="text" class="form-control col-md-9" name="filename" placeholder="Please enter the name of the file:"/>
                         </div>
                     </div>           
+                    {% endif %}
                 </div>      
                     <div class="portlet-body p-5">
-                            <textarea id="code_editor_demo_1" name="code">{{ code }}</textarea>
+                            <textarea  id="code_editor_demo_1" name="code">{{ code }}</textarea>
                     </div>
                     <div class="row pl-5 pt-3">
                         <div class = "col-md-6">
@@ -118,9 +130,11 @@
                         <div class="col-md-1">
                                 <button type="submit" name="compile" value="compile" class="btn btn-secondary">Compile And Run</button>
                         </div>
+                        {% if username != 'guest' %}
                         <div class="col-md-2 ml-25">
                                 <button type="submit" name="save" id="savefile_id" value="save" class="btn btn-secondary">Save</button>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 </form>
@@ -129,8 +143,9 @@
 </div>
 
     </div>
-
-</div>
+    {% if username != 'guest' %}
+        </div>
+    {% endif %}
         <script src={{url_for('static',filename='Styles/file manager/assets/vendor/jquery/dist/jquery.min.js')}} type="text/javascript"></script>
 
         <!-- Mobile Detect -->

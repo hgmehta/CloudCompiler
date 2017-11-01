@@ -3,7 +3,8 @@ import sys, parse
 import hashlib
 import datetime
 import base64
-
+reload(sys)
+sys.setdefaultencoding('utf-8')
 sys.path.append('./models')
 
 from flask import Flask, render_template, request, redirect, session, json
@@ -18,14 +19,27 @@ master_url = 'http://localhost:5003'
 
 @app.route('/')
 def main():
-   return render_template('CodeEditor.html')
+   return render_template('home.html')
+
+@app.route('/guest', methods=['GET','POST'])
+def guestcompiler():
+    if request.method == 'GET':
+        languages = retriveLanguages()
+        return render_template('_CodeEditor.html',username = 'guest', languages = languages)
+    elif request.method == 'POST':
+        _code = request.form['code']
+        _language = request.form['language']
+        _input = request.form['input']
+        _username = 'guest'
+        responce, languages = compile(_code, _language, _username, _input)
+        return render_template('_CodeEditor.html',username = 'guest',languages = languages, output = responce, code = _code, input = _input, language = _language)
+    else:
+        languages = retriveLanguages()
+        return render_template('_CodeEditor.html', languages = languages)
 
 def createHTMLString(string):
     string = string.replace("\r\n", "<br />")
     return string.replace("\n", "<br />")
-
-# compile and savefile service are implemented successfully
-# I have all ready connected it with database
 
 @app.route('/perform',methods=['POST'])
 def perform():
@@ -34,7 +48,104 @@ def perform():
     elif "save" in request.form:
         return redirect("http://localhost:8080/savefile",code = 307)
 
-@app.route('/compile', methods = ['GET','POST'])
+@app.route('/<username>/files', defaults={'filetype':'None'})
+@app.route('/<username>/files/<filetype>')
+def filemanager(username,filetype):
+    rows = []
+    print filetype
+    if filetype=="None":
+        conn = createConnection()
+        try:
+            conn = createConnection()
+            if conn.is_connected():
+                cursor = conn.cursor();
+                cursor.execute("SELECT DISTINCT _language,TO_BASE64(fileType) FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s", (session['username'],))
+                rows = cursor.fetchall()
+                rows = [list(i) for i in rows]
+            for row in rows:
+                row.append('Folder')
+                row.append(session['username'])
+                row.append('Size')
+                row.append('time')
+        except Error as e:
+            print(e)
+
+        finally:
+            cursor.close()
+            conn.close()
+        return render_template('FileManager.html',username = session['username'], links = rows)
+    else:
+        filetype_decoded = base64.b64decode(filetype)
+        conn = createConnection()
+        if conn.is_connected():
+            cursor = conn.cursor();
+            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s", (session['username'],filetype_decoded,))
+            rows = cursor.fetchall()
+            rows = [list(i) for i in rows]
+            print rows
+            return render_template('FileManager.html',username = session['username'], links = rows)
+
+@app.route('/login', methods = ['GET','POST'])
+def login():
+    msg = []
+    if request.method == 'GET':
+        if 'username' in session:
+            return redirect("http://localhost:8080/" + session['username'] + '/codeeditor', code=302)
+        return render_template('Login.html',errors = msg)
+    elif request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        errors = validateLogin(email,password)
+        if len(errors) == 0:
+            username = getUsernameFromEmail(email)
+            session['username'] = username
+            return redirect("http://localhost:8080/" + session['username']+ '/codeeditor', code=302)
+        else:
+            return render_template('Login.html',errors = errors)
+
+@app.route('/<username>/codeeditor',methods = ['GET','POST'])
+def logged_in(username):
+    if request.method == 'GET':
+        msg = "Page not found.!"
+        if 'username' in session:
+            if session['username'] != username:
+                return render_template('404.html', error = "Sorry", h1tag_msg = msg)
+            elif session['username'] == username:
+                languages = retriveLanguages()
+                return render_template('_CodeEditor.html',username = session['username'],languages = languages)
+        else:
+            return redirect("http://localhost:8080/", code=302)
+    elif request.method == 'POST':
+        _code = request.form['code']
+        _language = request.form['language']
+        _input = request.form['input']
+        _username = 'guest'
+
+        if "compile" in request.form:
+            if 'username' in session:
+                _username = session['username']
+            responce, languages = compile(_code, _language, _username, _input)
+            return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = responce, code = _code, input = _input, language = _language)
+        elif "save" in request.form:
+            _filename = request.form['filename']
+            _username = session['username']
+            output, languages = savefile(_code, _language, _input, _filename, _username)
+            return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language)
+
+@app.route('/<username>/dashboard',methods = ['GET'])
+def dashboard(username):
+    msg = "Page not found.!"
+    if 'username' in session:
+        if session['username'] != username:
+            return render_template('404.html', error = "Sorry", h1tag_msg = msg)
+        elif session['username'] == username:
+            languages = retriveLanguages()
+            return render_template('Dashboard.html',username = session['username'],languages = languages)
+    else:
+        return redirect("http://localhost:8080/", code=302)
+
+
 def compile(_code, _language, _username, _input):
     r = requests.post(master_url+'/master', data=json.dumps({'type':'compile', \
                                                             'code':_code, \
@@ -88,42 +199,6 @@ def savefile(_code,_language,_input,_filename,_username):
 
     return output, languages
 
-@app.route('/<username>/files', defaults={'filetype':'None'})
-@app.route('/<username>/files/<filetype>')
-def filemanager(username,filetype):
-    rows = []
-    print filetype
-    if filetype=="None":
-        conn = createConnection()
-        try:
-            conn = createConnection()
-            if conn.is_connected():
-                cursor = conn.cursor();
-                cursor.execute("SELECT DISTINCT _language,TO_BASE64(fileType) FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s", (session['username'],))
-                rows = cursor.fetchall()
-                rows = [list(i) for i in rows]
-            for row in rows:
-                row.append('Folder')
-                row.append(session['username'])
-                row.append('Size')
-                row.append('time')
-        except Error as e:
-            print(e)
-
-        finally:
-            cursor.close()
-            conn.close()
-        return render_template('FileManager.html',username = session['username'], links = rows)
-    else:
-        filetype_decoded = base64.b64decode(filetype)
-        conn = createConnection()
-        if conn.is_connected():
-            cursor = conn.cursor();
-            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s", (session['username'],filetype_decoded,))
-            rows = cursor.fetchall()
-            rows = [list(i) for i in rows]
-            print rows
-            return render_template('FileManager.html',username = session['username'], links = rows)
 
 def getPcidFromIP(ip):
     pcid = 1
@@ -149,25 +224,6 @@ def getPcidFromIP(ip):
         conn.close()
     return pcid
 
-@app.route('/login', methods = ['GET','POST'])
-def login():
-    msg = []
-    if request.method == 'GET':
-        if 'username' in session:
-            return redirect("http://localhost:8080/" + session['username'] + '/codeeditor', code=302)
-        return render_template('Login.html',errors = msg)
-    elif request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        errors = validateLogin(email,password)
-        if len(errors) == 0:
-            username = getUsernameFromEmail(email)
-            session['username'] = username
-            return redirect("http://localhost:8080/" + session['username']+ '/codeeditor', code=302)
-        else:
-            return render_template('Login.html',errors = errors)
-
 @app.errorhandler(404)
 def page_not_found(e):
     msg = "Page not Found.!"
@@ -177,47 +233,6 @@ def page_not_found(e):
 def server_not_found(e):
     msg = "Page not Found.!"
     return render_template('404.html',error = "Sorry", h1tag_msg = msg), 500
-
-@app.route('/<username>/codeeditor',methods = ['GET','POST'])
-def logged_in(username):
-    if request.method == 'GET':
-        msg = "Page not found.!"
-        if 'username' in session:
-            if session['username'] != username:
-                return render_template('404.html', error = "Sorry", h1tag_msg = msg)
-            elif session['username'] == username:
-                languages = retriveLanguages()
-                return render_template('_CodeEditor.html',username = session['username'],languages = languages)
-        else:
-            return redirect("http://localhost:8080/", code=302)
-    elif request.method == 'POST':
-        _code = request.form['code']
-        _language = request.form['language']
-        _input = request.form['input']
-        _username = 'guest'
-
-        if "compile" in request.form:
-            if 'username' in session:
-                _username = session['username']
-            responce, languages = compile(_code, _language, _username, _input)
-            return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = responce, code = _code, input = _input, language = _language)
-        elif "save" in request.form:
-            _filename = request.form['filename']
-            _username = session['username']
-            output, languages = savefile(_code, _language, _input, _filename, _username)
-            return render_template('_CodeEditor.html',username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language)
-
-@app.route('/<username>/dashboard',methods = ['GET'])
-def dashboard(username):
-    msg = "Page not found.!"
-    if 'username' in session:
-        if session['username'] != username:
-            return render_template('404.html', error = "Sorry", h1tag_msg = msg)
-        elif session['username'] == username:
-            languages = retriveLanguages()
-            return render_template('Dashboard.html',username = session['username'],languages = languages)
-    else:
-        return redirect("http://localhost:8080/", code=302)
 
 @app.route('/<username>/logout',methods = ['GET'])
 def logout(username):

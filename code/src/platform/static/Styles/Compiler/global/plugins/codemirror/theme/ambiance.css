@@ -2,17 +2,17 @@
 
 /* Color scheme */
 
-.cm-s-ambiance .cm-header { color: blue; }
+.cm-s-ambiance .cm-header { color: #00A2FF; }
 .cm-s-ambiance .cm-quote { color: #24C2C7; }
 
-.cm-s-ambiance .cm-keyword { color: #cda869; }
+.cm-s-ambiance .cm-keyword { color: blue; }
 .cm-s-ambiance .cm-atom { color: #CF7EA9; }
 .cm-s-ambiance .cm-number { color: #78CF8A; }
 .cm-s-ambiance .cm-def { color: #aac6e3; }
-.cm-s-ambiance .cm-variable { color: #ffb795; }
-.cm-s-ambiance .cm-variable-2 { color: #eed1b3; }
-.cm-s-ambiance .cm-variable-3 { color: #faded3; }
-.cm-s-ambiance .cm-property { color: #eed1b3; }
+.cm-s-ambiance .cm-variable { color: #061314; }
+.cm-s-ambiance .cm-variable-2 { color: #975D22; }
+.cm-s-ambiance .cm-variable-3 { color: #B4E468; }
+.cm-s-ambiance .cm-property { color: #977E66; }
 .cm-s-ambiance .cm-operator { color: #fa8d6a; }
 .cm-s-ambiance .cm-comment { color: #555; font-style:italic; }
 .cm-s-ambiance .cm-string { color: #8f9d6a; }
@@ -31,17 +31,17 @@
 .cm-s-ambiance .CodeMirror-matchingbracket { color: #0f0; }
 .cm-s-ambiance .CodeMirror-nonmatchingbracket { color: #f22; }
 
-.cm-s-ambiance div.CodeMirror-selected { background: rgba(255, 255, 255, 0.15); }
-.cm-s-ambiance.CodeMirror-focused div.CodeMirror-selected { background: rgba(255, 255, 255, 0.10); }
-.cm-s-ambiance .CodeMirror-line::selection, .cm-s-ambiance .CodeMirror-line > span::selection, .cm-s-ambiance .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
-.cm-s-ambiance .CodeMirror-line::-moz-selection, .cm-s-ambiance .CodeMirror-line > span::-moz-selection, .cm-s-ambiance .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-ambiance div.CodeMirror-selected { background: rgba(38, 21, 224, 0.15); }
+.cm-s-ambiance.CodeMirror-focused div.CodeMirror-selected { background: rgba(28, 35, 219, 0.1); }
+.cm-s-ambiance .CodeMirror-line::selection, .cm-s-ambiance .CodeMirror-line > span::selection, .cm-s-ambiance .CodeMirror-line > span > span::selection { background: rgba(8, 65, 170, 0.1); }
+.cm-s-ambiance .CodeMirror-line::-moz-selection, .cm-s-ambiance .CodeMirror-line > span::-moz-selection, .cm-s-ambiance .CodeMirror-line > span > span::-moz-selection { background: rgba(35, 31, 100, 0.1); }
 
 /* Editor styling */
 
 .cm-s-ambiance.CodeMirror {
   line-height: 1.40em;
-  color: #E6E1DC;
-  background-color: #202020;
+  color: #000000;
+  background-color: white;
   -webkit-box-shadow: inset 0 0 10px black;
   -moz-box-shadow: inset 0 0 10px black;
   box-shadow: inset 0 0 10px black;

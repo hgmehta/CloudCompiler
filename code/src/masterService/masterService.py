@@ -1,5 +1,8 @@
 import requests
 from flask import Flask, render_template, json, request
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__)
 
