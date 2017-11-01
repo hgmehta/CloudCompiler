@@ -22,9 +22,9 @@ def compile():
     inp = str(inp.decode('utf-8'))
 
     getpath = saveFILE(code, lan, userID, filename, inp)
-    output = str(getCompile(getpath,lan, timeout))
-    shutil.rmtree('../compile/'+str(userID))
+    output = getCompile(getpath,lan, timeout)
     print output
+    shutil.rmtree('../compile/'+str(userID))
     return output
 
 if __name__ == '__main__':
