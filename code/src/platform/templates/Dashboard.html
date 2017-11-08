@@ -6,14 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>Dashboard - Code Manager</title>
 
-        <!-- STYLESHEETS -->
-        <style type="text/css">
-            [fuse-cloak],
-            .fuse-cloak {
-                display: none !important;
-            }
-        </style>
-
         <!-- Icons.css -->
         <link href={{url_for('static',filename='Styles/file manager/assets/icons/fuse-icon-font/style.css')}} rel="stylesheet" type="text/css" />
 
@@ -105,135 +97,41 @@
     <div class="widget-group row">
 
         <!-- WIDGET 1 -->
-        <div class="col-12 col-sm-6 col-xl-3 p-3">
+        {% for file in filecount %}
+            <div class="col-12 col-sm-6 col-xl-3 p-3">
+                
+                <div class="widget widget1 card">
 
-            <div class="widget widget1 card">
+                    <div class="widget-header pl-4 pr-2 row no-gutters align-items-center justify-content-between">
 
-                <div class="widget-header pl-4 pr-2 row no-gutters align-items-center justify-content-between">
+                        <div class="col">
+                            <a href="{{domain}}{{username}}/files/{{file[3]}}"><img src="/static/{{file[2]}}"></img></a>
+                            <!--span class="h6">{{file[0]}}</span-->
 
-                    <div class="col">
+                        </div>
 
-                        <select class="h6 custom-select">
-                            <option selected="" value="today">Today</option>
-                            <option value="yesterday">Yesterday</option>
-                            <option value="tomorrow">Tomorrow</option>
-                        </select>
+                        <!--button type="button" class="btn btn-icon">
+                            <i class="icon icon-dots-vertical"></i>
+                        </button-->
 
                     </div>
 
-                    <button type="button" class="btn btn-icon">
-                        <i class="icon icon-dots-vertical"></i>
-                    </button>
+                    <div class="widget-content pt-2 pb-8 d-flex flex-column align-items-center justify-content-center">
 
-                </div>
+                        <a href="{{domain}}{{username}}/files/{{file[3]}}"><div class="title text-secondary">{{file[1]}}</div></a>
 
-                <div class="widget-content pt-2 pb-8 d-flex flex-column align-items-center justify-content-center">
+                    </div>
 
-                    <div class="title text-secondary">25</div>
+                    <div class="widget-footer p-4 bg-light row no-gutters align-items-center">
 
-                    <div class="sub-title h6 text-muted">DUE TASKS</div>
+                        <span class="text-muted">No. of Files Created for {{file[0]}}</span>
 
-                </div>
-
-                <div class="widget-footer p-4 bg-light row no-gutters align-items-center">
-
-                    <span class="text-muted">Completed:</span>
-
-                    <span class="ml-2">7</span>
-
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endfor %}
+        
         <!-- / WIDGET 1 -->
-
-        <!-- WIDGET 2 -->
-        <div class="col-12 col-sm-6 col-xl-3 p-3">
-
-            <div class="widget widget2 card">
-
-                <div class="widget-header pl-4 pr-2 row no-gutters align-items-center justify-content-between">
-
-                    <div class="col">
-                        <span class="h6">Overdue</span>
-                    </div>
-
-                    <button type="button" class="btn btn-icon">
-                        <i class="icon icon-dots-vertical"></i>
-                    </button>
-                </div>
-
-                <div class="widget-content pt-2 pb-8 d-flex flex-column align-items-center justify-content-center">
-                    <div class="title text-danger">4</div>
-                    <div class="sub-title h6 text-muted">TASKS</div>
-                </div>
-
-                <div class="widget-footer p-4 bg-light row no-gutters align-items-center">
-                    <span class="text-muted">Yesterday's:</span>
-                    <span class="ml-2">2</span>
-                </div>
-            </div>
-        </div>
-        <!-- / WIDGET 2 -->
-
-        <!-- WIDGET 3 -->
-        <div class="col-12 col-sm-6 col-xl-3 p-3">
-
-            <div class="widget widget3 card">
-
-                <div class="widget-header pl-4 pr-2 row no-gutters align-items-center justify-content-between">
-
-                    <div class="col">
-                        <span class="h6">Issues</span>
-                    </div>
-
-                    <button type="button" class="btn btn-icon">
-                        <i class="icon icon-dots-vertical"></i>
-                    </button>
-
-                </div>
-
-                <div class="widget-content pt-2 pb-8 d-flex flex-column align-items-center justify-content-center">
-                    <div class="title text-warning">32</div>
-                    <div class="sub-title h6 text-muted">OPEN</div>
-                </div>
-
-                <div class="widget-footer p-4 bg-light row no-gutters align-items-center">
-                    <span class="text-muted">Closed today:</span>
-                    <span class="ml-2">0</span>
-                </div>
-            </div>
-        </div>
-        <!-- / WIDGET 3 -->
-
-        <!-- WIDGET 4 -->
-        <div class="col-12 col-sm-6 col-xl-3 p-3">
-
-            <div class="widget widget4 card">
-
-                <div class="widget-header pl-4 pr-2 row no-gutters align-items-center justify-content-between">
-
-                    <div class="col">
-                        <span class="h6">Features</span>
-                    </div>
-
-                    <button type="button" class="btn btn-icon">
-                        <i class="icon icon-dots-vertical"></i>
-                    </button>
-
-                </div>
-
-                <div class="widget-content pt-2 pb-8 d-flex flex-column align-items-center justify-content-center">
-                    <div class="title text-info">42</div>
-                    <div class="sub-title h6 text-muted">PROPOSALS</div>
-                </div>
-
-                <div class="widget-footer p-4 bg-light row no-gutters align-items-center">
-                    <span class="text-muted">Implemented:</span>
-                    <span class="ml-2">8</span>
-                </div>
-            </div>
-        </div>
-        <!-- / WIDGET 4 -->
 
         <!-- WIDGET 5 -->
         <div class="col-12 p-3">

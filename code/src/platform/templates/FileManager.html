@@ -55,8 +55,10 @@
                     <div class="header-content d-flex flex-column justify-content-between">
                         <div class="breadcrumb text-truncate row no-gutters align-items-center  pt-10 pl-20">
                             <span class="h4">My Files</span>
+                            {% if folder != 'None' %}
                             <i class="icon-chevron-right separator"></i>
-                            <span class="h4">Documents</span>
+                            <span class="h4">{{folder}}</span>
+                            {% endif %}
                         </div>
                     </div>
                         <button id="add-file-button" type="submit" onclick="redirectTocode();" class="btn btn-danger btn-fab" aria-label="Add file">
@@ -83,14 +85,14 @@
                                         <td class="file-icon">
                                             <i class="icon-folder"></i>
                                         </td>
-                                        <td class="name"><a href="http://localhost:8080/{{username}}/files/{{row[1]}}">{{row[0]}}</a></td>    
+                                        <td class="name"><a href="{{domain}}{{username}}/files/{{row[1]}}">{{row[0]}}</a></td>    
                                     {% endif %}
                                     {% if row[2] != 'Folder' %}
                                     <td class="file-icon">
                                         <!--i class="icon-folder"></i-->
                                         <img src="/static/{{row[6]}}"> </img>
                                     </td>
-                                    <td class="name"><a href="http://localhost:8080/{{username}}/codeeditor?file={{row[1]}}&type={{row[2]}}">{{row[0]}}</a></td>
+                                    <td class="name"><a href="{{domain}}{{username}}/codeeditor?file={{row[1]}}&type={{row[2]}}">{{row[0]}}</a></td>
                                     {% endif %}
 
                                     
@@ -377,7 +379,7 @@
         <script src={{url_for('static',filename='Styles/file manager/assets/js/main.js')}} type="text/javascript"></script>
         <script type="text/javascript">
             function redirectTocode(){
-                window.location = "http://localhost:8080/{{username}}/codeeditor";
+                window.location = "{{domain}}{{username}}/codeeditor";
             }
         </script>
     </body>

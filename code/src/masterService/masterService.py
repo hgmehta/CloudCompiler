@@ -1,6 +1,8 @@
 import requests
 from flask import Flask, render_template, json, request
 import sys
+import ast
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -10,9 +12,16 @@ compiler_url = 'http://10.20.24.42:5004'
 savefile_url = 'http://10.20.24.42:5005'
 readfile_url = 'http://10.20.24.42:5006'
 
+def getMonitorStatus(monitorIP):
+    monitorfile_url = 'http://' + str(monitorIP)+":5007"
+    r = requests.post(monitorfile_url+'/monitor')
+    result = ast.literal_eval(str(r.text))
+    return result
+
 @app.route('/master', methods=["POST","GET"])
 def master():
     jsonRes = request.get_json()
+    print request.remote_addr
     _action = jsonRes['action']
 
     if _action=="compile":
@@ -31,8 +40,8 @@ def master():
                                                                     'userid':username, \
                                                                     'filename':filename}), \
                                                                     headers={'Content-Type' : 'application/json'})
-        print str(r.text)
-        return str(r.text)
+        return r.text
+
     elif _action=="savefile":
         code = jsonRes['code']
         language = jsonRes['language']

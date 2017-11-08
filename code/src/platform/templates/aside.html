@@ -22,7 +22,7 @@
                     </li>                           
     
                     <li class="nav-item">
-                        <a class="nav-link ripple " href="http://localhost:8080/{{username}}/dashboard"
+                        <a class="nav-link ripple " href="{{domain}}{{username}}/dashboard"
                         data-page-url="/apps-file-manager.html">
                             <i class="icon s-4 icon-account-box"></i>
                             <span>Dashboard</span>
@@ -30,7 +30,7 @@
                     </li>
     
                     <li class="nav-item">
-                        <a class="nav-link ripple" href="http://localhost:8080/{{username}}/files"
+                        <a class="nav-link ripple" href="{{domain}}{{username}}/files"
                             data-page-url="/apps-file-manager.html">
                             <i class="icon s-4 icon-folder"></i>
                             <span>Files</span>
@@ -38,10 +38,18 @@
                     </li>
     
                     <li class="nav-item">
-                        <a class="nav-link ripple " href="http://localhost:8080/{{username}}/codeeditor"
+                        <a class="nav-link ripple " href="{{domain}}{{username}}/codeeditor"
                         data-page-url="/apps-file-manager.html">
-                            <i class="icon s-4 icon-checkbox-marked"></i>
+                        <i class="icon-code-tags"></i>
                             <span>Code Editor</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link ripple " href="{{domain}}{{username}}/activity"
+                        data-page-url="/apps-file-manager.html">
+                        <i class="icon icon-eye-outline"></i>
+                            <span>User Activity</span>
                         </a>
                     </li>
                 </ul>

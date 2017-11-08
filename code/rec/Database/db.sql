@@ -56,6 +56,9 @@ SELECT * FROM languages;
 SELECT * FROM pcip;
 
 SELECT DISTINCT _language, TO_BASE64(fileType),fileType  FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = 'harshmehta';
-SELECT filename, fileType, 'harsh' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = 'harshmehta' AND filetype = 'py';repository
+SELECT filename, fileType, 'harsh' , date(timeCreated),icon FROM repository INNER JOIN  languages ON languages.extension = repository.fileType WHERE username = 'harshmehta' AND filetype = 'py';
+
+SELECT DISTINCT _language, COUNT(fileType),TO_BASE64(fileType)pcip, icon FROM repository INNER JOIN languages ON repository.fileType = languages.extension GROUP BY fileType;
+
 
 -- UPDATE forgotPassword SET isLinkActive = '0', isPasswordChanged = '1', timeChanged = '2017-10-07 17:49:41.312178' WHERE email = 'harsh_m@hotmail.com' AND password_key = '7ad05a93993e860da600d797e627e833155b3219af223e7a346eeeb738fcfc23';

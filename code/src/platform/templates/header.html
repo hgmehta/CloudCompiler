@@ -17,12 +17,12 @@
         
                         <div class="toolbar-separator"></div>
                         {% if username == 'guest' %}
-                        <a class="dropdown-item col-md-1 pl-5 horizontal-alignment-right"  href="http://localhost:8080/">
+                        <a class="dropdown-item col-md-1 pl-5 horizontal-alignment-right"  href="{{domain}}">
                             <div class="row no-gutters align-items-center flex-nowrap">
                                 <span class="px-3">Home</span>
                             </div>
                         </a>
-                        <a class="dropdown-item col-md-1 pl-5"  href="http://localhost:8080/login">
+                        <a class="dropdown-item col-md-1 pl-5"  href="{{domain}}login">
                             <div class="row no-gutters align-items-center flex-nowrap">
                                 <span class="px-3">Login</span>
                             </div>
@@ -58,7 +58,7 @@
         
                                 <div class="dropdown-divider"></div>
         
-                                <a class="dropdown-item" href="http://localhost:8080/{{username}}/logout">
+                            <a class="dropdown-item" href="{{domain}}{{username}}/logout">
                                     <div class="row no-gutters align-items-center flex-nowrap">
                                         <i class="icon-logout"></i>
                                         <span class="px-3">Logout</span>
