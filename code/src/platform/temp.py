@@ -71,3 +71,15 @@
 # for row in Allactivities:
 #     row[0] = count
 #     count = count + 1
+
+# conn.execute('''CREATE TABLE activityLog
+#                     (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+#                     username VARCHAR(15) NOT NULL,
+#                     sessionid VARCHAR(35) NOT NULL,
+#                     filename VARCHAR(25),
+#                     language VARCHAR(10),
+#                     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+#                     compilationStatus VARCHAR(1),
+#                     runtimeStatus VARCHAR(1),
+#                     duration VARCHAR(15),
+#                     memUsage VARCHAR(15) NOT NULL);''')

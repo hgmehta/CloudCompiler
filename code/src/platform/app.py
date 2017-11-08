@@ -9,13 +9,15 @@ from uuid import getnode
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-sys.path.append('./models')
 
 from flask import Flask, render_template, request, redirect, session, json
 from authenticateModel import *
 from werkzeug import generate_password_hash, check_password_hash
+
 from email_pyfile import *
-import sqlite3
+from activity_dependancies import *
+from filemanager_dependancies import *
+from service_dependancies import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cc'
@@ -27,33 +29,20 @@ domain = "http://" + AppAddress + ":" + str(port) + "/"
 
 master_url = 'http://localhost:5003'
 
-def connectTolog():
-    return sqlite3.connect('./../../rec/Database/Logs/log.db')
-
 @app.route('/temp')
 def temp():
     conn = connectTolog()
-    conn.execute("DELETE from loginlog where ID = 6;")
-    conn.commit()
+    cursor = getFromActivityLog(session['id'])
+    for row in cursor:
+        print "filename = ", row[0]
+        print "Language = ", row[1]
+        print "Time = ", row[2]
+        print "Compilation Status = ", row[3]
+        print "Runtime Status = ", row[4]
+        print "Duration = ", row[5]
+        print "Memory Uasge = ", row[6], "\n"
     conn.close()
     return "Connected Database"
-
-def insertInLoginlog(username):
-
-    platform = request.user_agent.platform
-    browser = request.user_agent.browser
-    ip = request.environ['REMOTE_ADDR']
-    time = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    conn = connectTolog()
-    conn.execute("INSERT INTO loginLog (username,ip,time,browser,Platform,sessionId) \
-                    VALUES ('" + username + "', '" + ip +  "', '" + time + "' , '" + browser + "', '" + platform +"', '" + session['id'] + "' )")
-    conn.commit()
-    conn.close()
-
-def getFromLoginlog(username):
-    conn = connectTolog()
-    cursor = conn.execute("SELECT id, username, ip, time, browser, Platform,sessionid from loginLog WHERE username = '" + username + "'")
-    return cursor
 
 @app.route('/<username>/activity', methods = ['GET'])
 def loginActivity(username):
@@ -61,12 +50,16 @@ def loginActivity(username):
         if session['username'] == username:
             if 'id' in request.args:
                 if len(request.args.get('id')) != 32:
-                    return "Sorry"
+                    msg = "Bad request"
+                    return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
                 else:
-                    return request.args.get('id')
+                    table = ["Filename", "Language", "Time", "Compilation Status", "Runtime Status", "Duration (s)", "Memory  Usage"]
+                    userActivity = list(getFromActivityLog(request.args.get('id')))
+                    return render_template('LoginActivity.html', domain = domain, username = session['username'], activities = userActivity, activityType = "user", table = table)
             else:
+                table = ["Date", "IP", "Platform", "Browser", "Actions"]
                 Allactivities = list(getFromLoginlog(session['username']))
-                return render_template('LoginActivity.html', domain = domain, username = session['username'], activities = Allactivities)
+                return render_template('LoginActivity.html', domain = domain, username = session['username'], activities = Allactivities, activityType = "login", table = table)
         else:
             msg = "Bad request"
             return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
@@ -89,15 +82,11 @@ def guestcompiler():
         _language = request.form['language']
         _input = request.form['input']
         _username = 'guest'
-        responce, languages = compile(_code, _language, _username, _input)
-        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = responce, code = _code, input = _input, language = _language)
+        response, languages = compile(_code, _language, _username, _input)
+        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language)
     else:
         languages = retriveLanguages()
         return render_template('_CodeEditor.html',domain = domain, languages = languages)
-
-def createHTMLString(string):
-    string = string.replace("\r\n", "<br />")
-    return string.replace("\n", "<br />")
 
 @app.route('/perform',methods=['POST'])
 def perform():
@@ -106,27 +95,7 @@ def perform():
     elif "save" in request.form:
         return redirect(domain + "savefile",code = 307)
 
-def retriveFolders():
-    rows = []
-    conn = createConnection()
-    try:
-        if conn.is_connected():
-            cursor = conn.cursor();
-            cursor.execute("SELECT DISTINCT _language,TO_BASE64(fileType) FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s", (session['username'],))
-            rows = cursor.fetchall()
-            rows = [list(i) for i in rows]
-        for row in rows:
-            row.append('Folder')
-            row.append(session['username'])
-            row.append('Size')
-            row.append('time')
-    except Error as e:
-        print(e)
 
-    finally:
-        cursor.close()
-        conn.close()
-    return rows
 
 @app.route('/<username>/files', defaults={'filetype':'None'})
 @app.route('/<username>/files/<filetype>')
@@ -141,29 +110,10 @@ def filemanager(username,filetype):
         conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
-            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s", (session['username'],filetype_decoded,))
+            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon,pcid FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s ORDER BY repository.id DESC", (session['username'],filetype_decoded,))
             rows = cursor.fetchall()
             rows = [list(i) for i in rows]
             return render_template('FileManager.html',folder = lang,domain = domain,username = session['username'], links = rows)
-
-def getLanguageFromFileType(filetype):
-    language = ""
-    try:
-        conn = createConnection()
-        if conn.is_connected():
-            cursor = conn.cursor();
-            cursor.execute("SELECT DISTINCT _language FROM languages WHERE extension = %s",(filetype,))
-            l = cursor.fetchone()
-            for lang in l:
-                language = str(lang)
-
-    except Error as e:
-        print(e)
-
-    finally:
-        conn.close()
-
-    return language
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -208,13 +158,14 @@ def logged_in(username):
                     return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
                 elif session['username'] == username:
                     languages = retriveLanguages()
-                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages)
+                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages,language = filetype)
             else:
                 return redirect(domain, code=302)
         else:
             code = readfile(filetype,session['username'],base64.b64decode(filename))
             languages = retriveLanguages()
-            return render_template('_CodeEditor.html',domain = domain,language = filetype,code = code,username = session['username'],languages = languages)
+            filetype = getLanguageFromType(filetype)
+            return render_template('_CodeEditor.html',domain = domain,code = code,username = session['username'],languages = languages,language = filetype)
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
@@ -224,12 +175,16 @@ def logged_in(username):
         if "compile" in request.form:
             if 'username' in session:
                 _username = session['username']
-            responce, languages = compile(_code, _language, _username, _input)
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = responce, code = _code, input = _input, language = _language)
+            response, languages, _cStatus, _rStatus, _execution = compile(_code, _language, _username, _input)
+            _language = getLanguageFromFileType(_language)
+            insertInActivityLog("-",_language,_cStatus,_rStatus,_execution,"10 KB",session['username'],session['id'])
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB")
         else:
             _filename = request.form['filename']
             _username = session['username']
             output, languages = savefile(_code, _language, _input, _filename, _username)
+            _language = getLanguageFromFileType(_language)
+            # insertInActivityLog(_filename,_language,"-","-","-","-",session['username'],session['id'])
             return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language)
 
 @app.route('/<username>/dashboard',methods = ['GET'])
@@ -243,122 +198,6 @@ def dashboard(username):
             return render_template('Dashboard.html',domain = domain,username = session['username'], filecount = fileno)
     else:
         return redirect(domain, code=302)
-
-def getTotalFileNo():
-    fileno = []
-    try:
-        conn = createConnection()
-        if conn.is_connected():
-            cursor = conn.cursor();
-            cursor.execute("SELECT DISTINCT _language, COUNT(fileType), icon,TO_BASE64(fileType) FROM repository INNER JOIN languages ON repository.fileType = languages.extension GROUP BY fileType")
-            fileno = cursor.fetchall()
-
-    except Error as e:
-        print(e)
-
-    finally:
-        conn.close()
-
-    return fileno
-
-def compile(_code, _language, _username, _input):
-    r = requests.post(master_url+'/master', data=json.dumps({'action':'compile', \
-                                                            'code':_code, \
-                                                            'language':_language, \
-                                                            'username': _username, \
-                                                            'input':_input}), headers={'Content-Type' : 'application/json'})
-
-    languages = retriveLanguages()
-    result = ast.literal_eval(str(r.text))
-    responce = ""
-    if result['valid_selection']=="False":
-        responce = "Please select the language from mentioned ones only"
-    else:
-        if result['compilation_status']=="False":
-            responce = result['compilation_error']
-        else:
-            if result['execution_status']=="False":
-                responce = result['execution_error']
-            else:
-                exe_time = result['execution_time']
-                responce = result['execution_output']
-
-    return responce, languages
-
-def readfile(_language, _username, _filename):
-    r = requests.post(master_url+'/master', data=json.dumps({'action':'read', \
-                                                            'language':_language, \
-                                                            'username': _username, \
-                                                            'filename':_filename}), headers={'Content-Type' : 'application/json'})
-    return str(r.text)
-
-def savefile(_code,_language,_input,_filename,_username):
-    r = requests.post(master_url+'/master', data=json.dumps({'action': 'savefile', \
-                                                            'code': _code,\
-                                                            'language': _language, \
-                                                            'input': _input, \
-                                                            'filename': _filename, \
-                                                            'username': _username}), \
-                                                            headers={'Content-Type' : 'application/json'})
-    responce = str(r.text)
-    result = parse.parse('{0}&{1}', responce)
-
-    _timestamp = result[0]
-    _pcip = result[1]
-    _pcid = getPcidFromIP(_pcip)
-
-    query = "INSERT INTO repository (filename,username,fileType, timeCreated, pcid)" \
-            " VALUES(%s,%s,%s,%s,%s)"
-    values = (_filename,_username,_language,_timestamp, _pcid)
-    isSuccess = True
-    try:
-        conn =createConnection()
-        if conn.is_connected():
-            cursor = conn.cursor()
-            cursor.execute(query, values)
-            conn.commit()
-        else:
-            isSuccess = False
-    except Error as error:
-        isSuccess = False
-        print(error)
-
-    finally:
-        cursor.close()
-        conn.close()
-
-    languages = retriveLanguages()
-    if isSuccess:
-        output = 'Your code is saved successfully.'
-    else:
-        output = 'Please try again.'
-
-    return output, languages
-
-
-def getPcidFromIP(ip):
-    pcid = 1
-    query = "SELECT pcid FROM pcip WHERE ip = %s"
-    values = (ip)
-    try:
-        conn = mysql.connector.connect(host='localhost',
-                                        port='3306',
-                                        database='cloudcompiler',
-                                        user='root',
-                                        password='lab@cc2')
-        if conn.is_connected():
-            cursor = conn.cursor()
-            cursor.execute(query, values)
-            rows = cursor.fetchone()
-            for row in rows:
-                pcid = int(row)
-    except Error as error:
-        print(error)
-
-    finally:
-        cursor.close()
-        conn.close()
-    return pcid
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -510,27 +349,6 @@ def change_password():
         else:
             msg = "Somthing thing went wrong. Please try again."
             return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
-
-def retriveLanguages():
-    languages = []
-    try:
-        conn = mysql.connector.connect(host='localhost',
-                                       port='3306',
-                                       database='cloudcompiler',
-                                       user='root',
-                                       password='lab@cc2')
-        if conn.is_connected():
-            cursor = conn.cursor();
-            cursor.execute("SELECT * FROM languages")
-            languages = cursor.fetchall()
-
-    except Error as e:
-        print(e)
-
-    finally:
-        conn.close()
-
-    return languages
 
 if __name__ == "__main__":
     app.run(host = '0.0.0.0', port=8080)

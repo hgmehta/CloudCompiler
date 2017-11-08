@@ -1,7 +1,7 @@
 def getMonitorIP(monitorData):
-    ip, maximum = monitorData[0][0], monitorData[0][1] 
+    ip, maximum = monitorData[0][0], int(monitorData[0][1]) 
     for i in range(1, len(monitorData)):
-        if monitorData[i][1]>maximum:
+        if int(monitorData[i][1])>maximum:
             ip = monitorData[i][0]
     return ip
 

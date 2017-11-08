@@ -2,15 +2,35 @@ import requests
 from flask import Flask, render_template, json, request
 import sys
 import ast
+import mysql.connector
+from getMonitor import getMonitorIP
+from mysql.connector import Error
+
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 app = Flask(__name__)
 
-compiler_url = 'http://10.20.24.42:5004'
-savefile_url = 'http://10.20.24.42:5005'
-readfile_url = 'http://10.20.24.42:5006'
+def retrieveMonitors():
+    languages = []
+    try:
+        conn = mysql.connector.connect(host='localhost',
+                                       port='3306',
+                                       database='cloudcompiler',
+                                       user='root',
+                                       password='lab@cc2')
+        if conn.is_connected():
+            cursor = conn.cursor();
+            cursor.execute("SELECT * FROM pcip")
+            monitorip = cursor.fetchall()
+        # print (monitorip)
+    except Error as e:
+        print(e)
+
+    finally:
+        conn.close()
+    return monitorip
 
 def getMonitorStatus(monitorIP):
     monitorfile_url = 'http://' + str(monitorIP)+":5007"
@@ -24,6 +44,21 @@ def master():
     print request.remote_addr
     _action = jsonRes['action']
 
+    # In pcdetails we will have the ip of the vms.
+    pcramdetails = []
+    pcstrgdetails = []
+    pcip = retrieveMonitors()
+    for i,ip in enumerate(pcip):
+        monitor_details = getMonitorStatus(ip[1])
+        ava_ram = monitor_details['ava_ram']
+        ava_storage = monitor_details['ava_storage']
+        pcramdetails.append([ip[1], ava_ram])
+        pcstrgdetails.append([ip[1], ava_storage])
+
+    print pcramdetails,pcstrgdetails
+    compileIP = getMonitorIP(pcramdetails)
+    storageIP = getMonitorIP(pcstrgdetails)
+
     if _action=="compile":
         code = jsonRes['code']
         language = jsonRes['language']
@@ -33,7 +68,7 @@ def master():
         language = str(language.decode('utf-8'))
         code = str(code.decode('utf-8'))
         inp = str(inp.decode('utf-8'))
-
+        compiler_url = "http://" + compileIP + ":5004"
         r = requests.post(compiler_url+'/compile', data=json.dumps({'getCode':code, \
                                                                     'type':language, \
                                                                     'input':inp, \
@@ -51,18 +86,20 @@ def master():
         language = str(language.decode('utf-8'))
         code = str(code.decode('utf-8'))
         inp = str(inp.decode('utf-8'))
-
+        savefile_url = "http://" + storageIP + ":5005"
         r = requests.post(savefile_url+'/savefile', data=json.dumps({'getCode':code, \
                                                                     'type':language, \
                                                                     'input':inp, \
                                                                     'userid':username, \
                                                                     'filename':filename}), \
                                                                     headers={'Content-Type' : 'application/json'})
-        return '{0}&{1}'.format(str(r.text), '10.20.24.42')
+        return '{0}&{1}'.format(str(r.text), storageIP)
     elif _action=="read":
         language = jsonRes['language']
         username = jsonRes['username']
         filename = jsonRes['filename']
+        ip = jsonRes['ip']
+        readfile_url = "http://" + str(ip) + ":5006"
         r = requests.post(readfile_url+'/readfile', data=json.dumps({'type':language, \
                                                                     'userid':username, \
                                                                     'filename':filename}), \

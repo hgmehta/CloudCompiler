@@ -90,10 +90,10 @@
                         <select id = "language_id" name="language">
                                 <option value="none" selected>Select Language</option>
                             {% for lang in languages %}
-                                {% if lang[1] == language %}
+                                {% if lang[0] == language %}
                                     <option value={{lang[1]}} selected>{{lang[0]}}</option>
                                 {% endif %}
-                                {% if lang[1] != language %}
+                                {% if lang[0] != language %}
                                     <option value={{lang[1]}}>{{lang[0]}}</option>
                                 {% endif %}
                             {% endfor %}
@@ -123,6 +123,14 @@
                             <div class="portlet-body">
                                         <textarea style="resize:none; height:152px; width:400px; background-color: #202020; color: white" id="code_editor_output" name="output" readonly>{{ output }}</textarea>
                             </div><br>
+                        </div>
+                    </div>
+                    <div class="row pl-5 pt-3">
+                        <div class = "col-md-6">
+                        </div>
+                        <div class = "col-md-6">
+                            <span>Execution Time: {{ executionTime }}</span><br/>
+                            <span>Memory Usage: {{memUsage}}</span>
                         </div>
                     </div>
                     <div class="row pl-5 pt-3 pb-5">
