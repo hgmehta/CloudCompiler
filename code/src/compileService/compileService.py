@@ -22,10 +22,9 @@ def compile():
     inp = str(inp.decode('utf-8'))
 
     getpath = saveFILE(code, lan, userID, filename, inp)
-    output = getCompile(getpath,lan, timeout)
-    print output
-    shutil.rmtree('../compile/'+str(userID))
-    return output
+    compilation_status = getCompile(getpath,lan, timeout)
+    #shutil.rmtree('../compile/'+str(userID))
+    return str(compilation_status)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5004, debug=True, threaded=True)
