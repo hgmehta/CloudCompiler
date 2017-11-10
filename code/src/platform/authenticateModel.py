@@ -1,7 +1,10 @@
 import mysql.connector
 from mysql.connector import Error
 import datetime
-from database_dependancies import *
+import sys
+
+sys.path.append('./dependancies')
+from database import *
 
 def validateRegistration(email,username,password,confirmpassword):    
     errors = []

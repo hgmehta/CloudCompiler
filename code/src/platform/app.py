@@ -8,6 +8,7 @@ import socket, ast
 from uuid import getnode
 
 reload(sys)
+sys.path.append('./dependancies/')
 sys.setdefaultencoding('utf-8')
 
 from flask import Flask, render_template, request, redirect, session, json
@@ -15,9 +16,9 @@ from authenticateModel import *
 from werkzeug import generate_password_hash, check_password_hash
 
 from email_pyfile import *
-from activity_dependancies import *
-from filemanager_dependancies import *
-from service_dependancies import *
+from activity import *
+from filemanager import *
+from service import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cc'
@@ -82,8 +83,8 @@ def guestcompiler():
         _language = request.form['language']
         _input = request.form['input']
         _username = 'guest'
-        response, languages = compile(_code, _language, _username, _input)
-        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language)
+        response, languages, _, _, exe_time = compile(_code, _language, _username, _input)
+        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language, executionTime=exe_time)
     else:
         languages = retriveLanguages()
         return render_template('_CodeEditor.html',domain = domain, languages = languages)
@@ -110,7 +111,9 @@ def filemanager(username,filetype):
         conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
-            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon,pcid FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s ORDER BY repository.id DESC", (session['username'],filetype_decoded,))
+            #totalfiles = totalfile(filetype)
+            #totalpages = int(totalfile / 10)
+            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon,pcid, id FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s ORDER BY repository.id DESC", (session['username'],filetype_decoded,))
             rows = cursor.fetchall()
             rows = [list(i) for i in rows]
             return render_template('FileManager.html',folder = lang,domain = domain,username = session['username'], links = rows)
@@ -158,14 +161,15 @@ def logged_in(username):
                     return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
                 elif session['username'] == username:
                     languages = retriveLanguages()
-                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages,language = filetype)
+                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages,language = filetype, filetype = "None")
             else:
                 return redirect(domain, code=302)
         else:
-            code = readfile(filetype,session['username'],base64.b64decode(filename))
+            filename = base64.b64decode(filename)
+            code = readfile(filetype,session['username'],filename)
             languages = retriveLanguages()
-            filetype = getLanguageFromType(filetype)
-            return render_template('_CodeEditor.html',domain = domain,code = code,username = session['username'],languages = languages,language = filetype)
+            file_type = getLanguageFromType(filetype)
+            return render_template('_CodeEditor.html',domain = domain,code = code,username = session['username'],languages = languages,language = file_type, fname = filename, filetype = filetype)
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
@@ -178,14 +182,14 @@ def logged_in(username):
             response, languages, _cStatus, _rStatus, _execution = compile(_code, _language, _username, _input)
             _language = getLanguageFromFileType(_language)
             insertInActivityLog("-",_language,_cStatus,_rStatus,_execution,"10 KB",session['username'],session['id'])
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB")
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB", filetype = "None")
         else:
             _filename = request.form['filename']
             _username = session['username']
             output, languages = savefile(_code, _language, _input, _filename, _username)
             _language = getLanguageFromFileType(_language)
             # insertInActivityLog(_filename,_language,"-","-","-","-",session['username'],session['id'])
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language)
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language, filetype = "None")
 
 @app.route('/<username>/dashboard',methods = ['GET'])
 def dashboard(username):

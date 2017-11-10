@@ -98,6 +98,9 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
+                        {% if filetype != "None" %}
+                        Filename: <input  type="text" value="{{fname}}.{{filetype}}" readonly/>
+                        {% endif %}
                     </h6>
                     {% if username != 'guest' %}
                     <div class="col-md-4">
