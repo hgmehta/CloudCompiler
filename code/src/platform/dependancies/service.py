@@ -40,7 +40,7 @@ def compile(_code, _language, _username, _input):
                 response = result['execution_output']
     print 'Suggestion :- ', result['suggestion']
     exe_time = round(float(exe_time),5)
-    return response, languages, _cStatus, _rStatus, str(exe_time), str(result['suggestion'])
+    return response, languages, _cStatus, _rStatus, str(exe_time), result['suggestion']
 
 def readfile(_language, _username, _filename):
     ip_address = get_ip_from_filename(_language, _username, _filename)

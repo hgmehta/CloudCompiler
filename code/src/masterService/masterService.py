@@ -50,6 +50,7 @@ def master():
             monitor_details = getMonitorStatus(ip[1])
             ava_ram = monitor_details['ava_ram']
             pcramdetails.append([ip[1], ava_ram])
+
         compileIP = getMonitorIP(pcramdetails)
 
         code = jsonRes['code']
