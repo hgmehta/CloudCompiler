@@ -46,7 +46,6 @@ CREATE TABLE pcip(
 	pcid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     ip VARCHAR(20)  NOT NULL UNIQUE KEY    
 );
-
 INSERT INTO users (email,username,password) VALUES('harshmehta87.1997.hm@gmail.com','hgmehta','12345');
 SELECT * FROM users;
 SELECT * FROM forgotPassword;

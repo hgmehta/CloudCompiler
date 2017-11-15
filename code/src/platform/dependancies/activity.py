@@ -33,11 +33,14 @@ def insertInLoginlog(username):
     browser = request.user_agent.browser
     ip = request.environ['REMOTE_ADDR']
     time = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    conn = connectTolog()
-    conn.execute("INSERT INTO loginLog (username, ip, time, browser, Platform, sessionId) \
-                VALUES ('" + username + "', '" + ip +  "', '" + time + "' , '" + browser + "', '" + platform +"', '" + session['id'] + "' )")
-    conn.commit()
-    conn.close()
+    try:
+        conn = connectTolog()
+        conn.execute("INSERT INTO loginLog (username, ip, time, browser, Platform, sessionId) \
+                    VALUES ('" + username + "', '" + ip +  "', '" + time + "' , '" + browser + "', '" + platform +"', '" + session['id'] + "' )")
+        conn.commit()
+        conn.close()
+    except Error as e:
+        print("Sorry, we are unable to log your data..!")
 
 # Retrieves log actitvity of user
 def getFromLoginlog(username):

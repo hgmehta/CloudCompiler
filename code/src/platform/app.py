@@ -1,19 +1,15 @@
-import requests
 import sys, parse
 import hashlib
-import datetime
 import base64
 import random
 import socket, ast
-from uuid import getnode
 
 reload(sys)
 sys.path.append('./dependancies/')
 sys.setdefaultencoding('utf-8')
 
-from flask import Flask, render_template, request, redirect, session, json
+from flask import Flask, render_template, request, redirect, session
 from authenticateModel import *
-from werkzeug import generate_password_hash, check_password_hash
 
 from email_pyfile import *
 from activity import *
@@ -66,9 +62,11 @@ def loginActivity(username):
             return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
     else:
         return redirect(domain, code=302)
+
 @app.route('/')
 def main():
    return render_template('home.html',domain = domain)
+
 
 @app.route('/guest', methods=['GET','POST'])
 def guestcompiler():
@@ -77,17 +75,17 @@ def guestcompiler():
             return redirect(domain + session['username'] + "/codeeditor",code = 302)
         else:
             languages = retriveLanguages()
-            return render_template('_CodeEditor.html',domain = domain,username = 'guest', languages = languages)
+            return render_template('_CodeEditor.html',domain = domain,username = 'guest', languages = languages,filetype = "None",suggestion = "None")
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
         _input = request.form['input']
         _username = 'guest'
-        response, languages, _, _, exe_time = compile(_code, _language, _username, _input)
-        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language, executionTime=exe_time)
+        response, languages, _, _, exe_time, _suggestion = compile(_code, _language, _username, _input)
+        return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language, executionTime=exe_time, filetype = "None",suggestion="None")
     else:
         languages = retriveLanguages()
-        return render_template('_CodeEditor.html',domain = domain, languages = languages)
+        return render_template('_CodeEditor.html',domain = domain, languages = languages, filetype = "None")
 
 @app.route('/perform',methods=['POST'])
 def perform():
@@ -109,14 +107,9 @@ def filemanager(username,filetype):
         filetype_decoded = base64.b64decode(filetype)
         lang = getLanguageFromFileType(filetype_decoded)
         conn = createConnection()
-        if conn.is_connected():
-            cursor = conn.cursor();
-            #totalfiles = totalfile(filetype)
-            #totalpages = int(totalfile / 10)
-            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + session['username'] + "' , 'Size' , date(timeCreated),icon,pcid, id FROM repository INNER JOIN languages ON languages.extension = repository.fileType WHERE username = %s AND filetype = %s ORDER BY repository.id DESC", (session['username'],filetype_decoded,))
-            rows = cursor.fetchall()
-            rows = [list(i) for i in rows]
-            return render_template('FileManager.html',folder = lang,domain = domain,username = session['username'], links = rows)
+        rows = retrievefiles(session['username'], filetype_decoded)
+        return render_template('FileManager.html',folder = lang,domain = domain,username = session['username'], links = rows)
+
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -161,7 +154,7 @@ def logged_in(username):
                     return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
                 elif session['username'] == username:
                     languages = retriveLanguages()
-                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages,language = filetype, filetype = "None")
+                    return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages,language = filetype, filetype = "None",suggestion = "None")
             else:
                 return redirect(domain, code=302)
         else:
@@ -169,7 +162,7 @@ def logged_in(username):
             code = readfile(filetype,session['username'],filename)
             languages = retriveLanguages()
             file_type = getLanguageFromType(filetype)
-            return render_template('_CodeEditor.html',domain = domain,code = code,username = session['username'],languages = languages,language = file_type, fname = filename, filetype = filetype)
+            return render_template('_CodeEditor.html',domain = domain,code = code,username = session['username'],languages = languages,language = file_type, fname = filename, filetype = filetype,suggestion = "None")
     elif request.method == 'POST':
         _code = request.form['code']
         _language = request.form['language']
@@ -179,17 +172,20 @@ def logged_in(username):
         if "compile" in request.form:
             if 'username' in session:
                 _username = session['username']
-            response, languages, _cStatus, _rStatus, _execution = compile(_code, _language, _username, _input)
+            response, languages, _cStatus, _rStatus, _execution, _suggestion = compile(_code, _language, _username, _input)
+            if _suggestion == "":
+                _suggestion = "None"
             _language = getLanguageFromFileType(_language)
             insertInActivityLog("-",_language,_cStatus,_rStatus,_execution,"10 KB",session['username'],session['id'])
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB", filetype = "None")
+            print "suggestion:",_suggestion,"OK"
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB", filetype = "None", suggestion = _suggestion)
         else:
             _filename = request.form['filename']
             _username = session['username']
             output, languages = savefile(_code, _language, _input, _filename, _username)
             _language = getLanguageFromFileType(_language)
             # insertInActivityLog(_filename,_language,"-","-","-","-",session['username'],session['id'])
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language, filetype = "None")
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = output, code = _code, input = _input, language = _language, filetype = "None",suggestion = "None")
 
 @app.route('/<username>/dashboard',methods = ['GET'])
 def dashboard(username):
@@ -355,4 +351,4 @@ def change_password():
             return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
 
 if __name__ == "__main__":
-    app.run(host = '0.0.0.0', port=8080)
+    app.run(host = '0.0.0.0', port=8080, threaded=True)

@@ -41,34 +41,29 @@ def getMonitorStatus(monitorIP):
 @app.route('/master', methods=["POST","GET"])
 def master():
     jsonRes = request.get_json()
-    print request.remote_addr
     _action = jsonRes['action']
 
-    # In pcdetails we will have the ip of the vms.
-    pcramdetails = []
-    pcstrgdetails = []
-    pcip = retrieveMonitors()
-    for i,ip in enumerate(pcip):
-        monitor_details = getMonitorStatus(ip[1])
-        ava_ram = monitor_details['ava_ram']
-        ava_storage = monitor_details['ava_storage']
-        pcramdetails.append([ip[1], ava_ram])
-        pcstrgdetails.append([ip[1], ava_storage])
-
-    print pcramdetails,pcstrgdetails
-    compileIP = getMonitorIP(pcramdetails)
-    storageIP = getMonitorIP(pcstrgdetails)
-
     if _action=="compile":
+        pcramdetails = []
+        pcip = retrieveMonitors()
+        for i, ip in enumerate(pcip):
+            monitor_details = getMonitorStatus(ip[1])
+            ava_ram = monitor_details['ava_ram']
+            pcramdetails.append([ip[1], ava_ram])
+        compileIP = getMonitorIP(pcramdetails)
+
         code = jsonRes['code']
         language = jsonRes['language']
         inp = jsonRes['input']
         username = jsonRes['username']
         filename = 'example'
+
         language = str(language.decode('utf-8'))
         code = str(code.decode('utf-8'))
         inp = str(inp.decode('utf-8'))
+
         compiler_url = "http://" + compileIP + ":5004"
+
         r = requests.post(compiler_url+'/compile', data=json.dumps({'getCode':code, \
                                                                     'type':language, \
                                                                     'input':inp, \
@@ -78,15 +73,26 @@ def master():
         return r.text
 
     elif _action=="savefile":
+        pcstrgdetails = []
+        pcip = retrieveMonitors()
+        for i, ip in enumerate(pcip):
+            monitor_details = getMonitorStatus(ip[1])
+            ava_storage = monitor_details['ava_storage']
+            pcstrgdetails.append([ip[1], ava_storage])
+        storageIP = getMonitorIP(pcstrgdetails)
+
         code = jsonRes['code']
         language = jsonRes['language']
         inp = jsonRes['input']
         username = jsonRes['username']
         filename = jsonRes['filename']
+
         language = str(language.decode('utf-8'))
         code = str(code.decode('utf-8'))
         inp = str(inp.decode('utf-8'))
+
         savefile_url = "http://" + storageIP + ":5005"
+
         r = requests.post(savefile_url+'/savefile', data=json.dumps({'getCode':code, \
                                                                     'type':language, \
                                                                     'input':inp, \
@@ -95,16 +101,17 @@ def master():
                                                                     headers={'Content-Type' : 'application/json'})
         return '{0}&{1}'.format(str(r.text), storageIP)
     elif _action=="read":
+
         language = jsonRes['language']
         username = jsonRes['username']
         filename = jsonRes['filename']
         ip = jsonRes['ip']
+
         readfile_url = "http://" + str(ip) + ":5006"
         r = requests.post(readfile_url+'/readfile', data=json.dumps({'type':language, \
                                                                     'userid':username, \
                                                                     'filename':filename}), \
                                                                     headers={'Content-Type' : 'application/json'})
-        print str(r.text)
         return str(r.text)
     else:
         return "Sorry, wrong request"

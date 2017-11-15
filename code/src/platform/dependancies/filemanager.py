@@ -16,7 +16,7 @@ def retriveFolders():
             row.append('Size')
             row.append('time')
     except Error as e:
-        print(e)
+        print("Sorry, we are Unable to get your files..!")
 
     finally:
         cursor.close()
@@ -34,7 +34,6 @@ def getLanguageFromFileType(filetype):
             l = cursor.fetchone()
             for lang in l:
                 language = str(lang)
-
     except Error as e:
         print(e)
 
@@ -181,3 +180,22 @@ def totalfile(filetype):
         conn.close()
 
     return count
+
+def retrievefiles(username, filetype):
+    conn = createConnection()
+    try:
+        if conn.is_connected():
+            cursor = conn.cursor();
+            cursor.execute("SELECT filename, TO_BASE64(filename), fileType, '" + username + "' , 'Size' , \
+                            date(timeCreated),icon,pcid, id \
+                            FROM repository INNER JOIN languages \
+                            ON languages.extension = repository.fileType \
+                            WHERE username = %s AND filetype = %s \
+                            ORDER BY repository.id DESC",(username, filetype,))
+            rows = cursor.fetchall()
+            rows = [list(i) for i in rows]
+            return  rows
+            return render_template('FileManager.html', folder=lang, domain=domain, username=session['username'],
+                                   links=rows)
+    except Error as e:
+        print("Sorry, we are unable to retrive your files..!")

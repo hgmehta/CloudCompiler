@@ -7,7 +7,6 @@ def monitorStatus():
 	avail_mem = (popen.stdout.read()).strip()
 	avail_mem = avail_mem.split(' ')[0]
 	status['ava_ram'] = avail_mem
-	
 
 	popen = subprocess.Popen(("df -h | grep /dev/xvda1 | awk {'print $4'}"), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	status['ava_storage'] = popen.stdout.read()[:-2]

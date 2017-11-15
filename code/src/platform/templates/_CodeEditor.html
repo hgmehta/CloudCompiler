@@ -70,7 +70,7 @@
         <div class="doc cards-doc page-layout blank full-width p-5">
     {% endif %}
     {% if username == 'guest' %}
-        <div class="doc cards-doc page-layout blank full-width px-40 pt-30">
+        <div class="doc cards-doc page-layout blank full-width pl-50 pr-50 pt-20">
     {% endif %}
             <div class="col-12">
                 {% if username != 'guest' %}
@@ -87,7 +87,7 @@
                     </div>
                     <div class="row"> 
                     <h6 style="font-weight: bold;" class="pl-5 pt-3 ml-3">
-                        <select id = "language_id" name="language">
+                        <select class="mr-5" id = "language_id" name="language">
                                 <option value="none" selected>Select Language</option>
                             {% for lang in languages %}
                                 {% if lang[0] == language %}
@@ -99,7 +99,7 @@
                             {% endfor %}
                         </select>
                         {% if filetype != "None" %}
-                        Filename: <input  type="text" value="{{fname}}.{{filetype}}" readonly/>
+                        Filename: <input type="text" value="{{fname}}.{{filetype}}" readonly/>
                         {% endif %}
                     </h6>
                     {% if username != 'guest' %}
@@ -133,10 +133,15 @@
                         </div>
                         <div class = "col-md-6">
                             <span>Execution Time: {{ executionTime }}</span><br/>
-                            <span>Memory Usage: {{memUsage}}</span>
+                            <span>Memory Usage: {{memUsage}}</span><br/>
+                            {% if suggestion != "None" %}
+                            <div class="pt-5">
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#suggestionmodel">See Suggestion</button>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="row pl-5 pt-3 pb-5">
+                    <div class="row pl-5 pb-5">
                         <div class="col-md-1">
                                 <button type="submit" name="compile" value="compile" class="btn btn-secondary">Compile And Run</button>
                         </div>
