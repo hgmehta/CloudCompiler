@@ -5,12 +5,12 @@ from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-MY_ADDRESS = 'cloudcompiler@hotmail.com'
+MY_ADDRESS = 'cloudcompiler2@gmail.com'
 PASSWORD = 'lab@@cc2'
 
 def mail(to,message,subject):
     # set up the SMTP server
-    s = smtplib.SMTP(host='smtp-mail.outlook.com', port=587)
+    s = smtplib.SMTP(host='smtp.gmail.com', port=587)
     s.starttls()
     s.login(MY_ADDRESS, PASSWORD)
 

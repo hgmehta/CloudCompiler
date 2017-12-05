@@ -1,0 +1,25 @@
+.textAreaColumn{
+    width:100%;    
+}
+.textAreaColumn div{
+    float:left;
+    width:25%;
+    padding:10px;
+    box-sizing: border-box;
+}
+
+.textAreaColumn div span{
+    display:block;
+    padding-bottom: 10px;
+}
+
+.textAreaColumn div textarea{
+    box-sizing: border-box;
+    width:100%;
+    min-height:120px;
+}
+.inv{
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}

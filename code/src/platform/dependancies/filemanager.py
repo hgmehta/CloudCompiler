@@ -61,13 +61,13 @@ def getLanguageFromType(fileType):
         conn.close()
     return language
 
-def getTotalFileNo():
+def getTotalFileNo(username):
     fileno = []
     try:
         conn = createConnection()
         if conn.is_connected():
             cursor = conn.cursor();
-            cursor.execute("SELECT DISTINCT _language, COUNT(fileType), icon,TO_BASE64(fileType) FROM repository INNER JOIN languages ON repository.fileType = languages.extension GROUP BY fileType")
+            cursor.execute("SELECT DISTINCT _language, COUNT(fileType), icon,TO_BASE64(fileType) FROM repository INNER JOIN languages ON repository.fileType = languages.extension WHERE username = '" + username + "' GROUP BY fileType")
             fileno = cursor.fetchall()
 
     except Error as e:

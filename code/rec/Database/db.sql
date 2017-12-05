@@ -11,6 +11,13 @@ CREATE TABLE users(
     activation_key VARCHAR(64) NOT NULL
 );
 
+CREATE TABLE adminusers(
+	email VARCHAR(100) UNIQUE KEY NOT NULL,
+    password VARCHAR(20) NOT NULL
+);
+
+select * FROM adminusers;
+
 CREATE TABLE forgotPassword(
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	email VARCHAR(100) NOT NULL,
@@ -33,6 +40,33 @@ CREATE TABLE repository(
     FOREIGN KEY (username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (pcid) REFERENCES pcip(pcid) ON DELETE RESTRICT ON UPDATE CASCADE,
 	FOREIGN KEY (fileType) REFERENCES languages(extension) ON DELETE RESTRICT ON UPDATE CASCADE    
+);
+
+CREATE TABLE loginActivity
+(
+	ID INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(15) NOT NULL,
+    ip VARCHAR(20) NOT NULL,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    browser VARCHAR(15) NOT NULL,
+    Platform VARCHAR(15) NOT NULL,
+    sessionID VARCHAR(35) NOT NULL,
+    FOREIGN KEY (username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE TABLE activitylog
+(
+	ID INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	username VARCHAR(15) NOT NULL,
+	sessionid VARCHAR(35) NOT NULL,
+	filename VARCHAR(25),
+	language VARCHAR(10),
+	time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	compilationStatus VARCHAR(1),
+	runtimeStatus VARCHAR(1),
+	duration VARCHAR(15),
+	memUsage VARCHAR(15) NOT NULL,
+    FOREIGN KEY (username) REFERENCES users(username) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE languages(
@@ -68,3 +102,5 @@ SELECT id, filename, username, filetype, timeCreated, @row_num := @row_num + 1 a
 
 
 -- UPDATE forgotPassword SET isLinkActive = '0', isPasswordChanged = '1', timeChanged = '2017-10-07 17:49:41.312178' WHERE email = 'harsh_m@hotmail.com' AND password_key = '7ad05a93993e860da600d797e627e833155b3219af223e7a346eeeb738fcfc23';
+
+SELECT DISTINCT _language, COUNT(fileType), icon,TO_BASE64(fileType) FROM repository INNER JOIN languages ON repository.fileType = languages.extension WHERE username = 'harshmehta' GROUP BY fileType;

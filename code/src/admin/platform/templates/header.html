@@ -1,0 +1,49 @@
+<nav id="toolbar" class="fixed-top bg-white">
+        
+            <div class="row no-gutters align-items-center flex-nowrap">
+        
+                <div class="col">
+        
+                    <div class="row no-gutters align-items-center flex-nowrap">
+        
+                        
+        
+                            <button type="button" class="toggle-aside-button btn btn-icon d-block d-lg-none"
+                                    data-fuse-bar-toggle="aside">
+                                <i class="icon icon-menu"></i>
+                            </button>
+        
+                            <div class="toolbar-separator d-block d-lg-none"></div>
+        
+                        <div class="toolbar-separator"></div>
+                        {% if username == 'guest' %}
+                        <a class="dropdown-item col-md-1 pl-5 horizontal-alignment-right"  href="{{domain}}">
+                            <div class="row no-gutters align-items-center flex-nowrap">
+                                <span class="px-3">Home</span>
+                            </div>
+                        </a>
+                        <a class="dropdown-item col-md-1 pl-5"  href="{{domain}}login">
+                            <div class="row no-gutters align-items-center flex-nowrap">
+                                <span class="px-3">Login</span>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+        
+                <div class="col-auto">
+        
+                    <div class="row no-gutters align-items-center justify-content-end">
+        
+                        <div>
+                        <a class="dropdown-item" href="{{domain}}admin/logout">
+                            <div class="row no-gutters align-items-center flex-nowrap">
+                                <i class="icon-logout"></i>
+                                <span class="px-3">Logout</span>
+                            </div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>

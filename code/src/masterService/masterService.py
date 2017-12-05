@@ -32,7 +32,7 @@ def retrieveMonitors():
         conn.close()
     return monitorip
 
-def getMonitorStatus(monitorIP):
+def getMonitorStatus(monitorIP): 
     monitorfile_url = 'http://' + str(monitorIP)+":5007"
     r = requests.post(monitorfile_url+'/monitor')
     result = ast.literal_eval(str(r.text))

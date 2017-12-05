@@ -11,6 +11,9 @@ def monitorStatus():
 	popen = subprocess.Popen(("df -h | grep /dev/xvda1 | awk {'print $4'}"), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	status['ava_storage'] = popen.stdout.read()[:-2]
 
+	popen = subprocess.Popen(("df -h | grep /dev/xvda1 | awk {'print $2'}"), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	status['total_storage'] = popen.stdout.read()[:-2]
+
 	return status
 
 if __name__=="__main__":

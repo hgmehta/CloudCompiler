@@ -1,8 +1,30 @@
 from multiprocessing import Process, Queue
 from suggestion import suggestJava
-import os,signal
+import os, signal, sys
 import subprocess
 import time
+import threading
+import psutil
+
+def memory_usage(z, thread_q):
+	"""Memory usage of the current process in kilobytes."""
+	status = None
+	memory = 0
+	result = {'peak': 0, 'rss': 0,'data': 0, 'stk': 0}
+	try:
+		# This will only work on systems with a /proc file system
+		# (like Linux).
+		status = open("/proc/"+str(z)+"/status")
+		for line in status:
+			parts = line.split()
+			key = parts[0][2:-1].lower()
+			if key in result:
+				result[key] = int(parts[1])
+	finally:
+		if status is not None:
+			status.close()
+	memory = result['data']+result['stk']
+	thread_q.put(memory)
 
 def getFileDetails(filename):
 	filename = filename.rsplit('.',1)
@@ -20,10 +42,18 @@ def getCompilationStatus(compilation_args):
     return compilation_result
 
 def getOutputStatus(execution_args, q):
+    thread_queue = Queue()
     execution_result = {}
     popen = subprocess.Popen(execution_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    thr = threading.Thread(target=memory_usage, args=[popen.pid, thread_queue])
+    thr.start()
+    ru = os.wait4(popen.pid, 0)[2]
+    thr.join()
+
     execution_result['stdout'] = popen.stdout.read()
     execution_result['stderr'] = popen.stderr.read()
+    execution_result['mem_usage'] = str(thread_queue.get()*0.001)+' MB'
     q.put(execution_result)
 
 def timer(timeout):
@@ -84,6 +114,7 @@ def compile(path, fname, exe, lan, timeout):
 				final_status['execution_error'] = ""
 				final_status['execution_output'] = checkoutput['stdout']
 				final_status['execution_time'] = stop - start
+				final_status['memory_usage'] = checkoutput['mem_usage']
 				final_status['suggestion'] = ""
 				if exe=="java":
 					final_status['suggestion'] = suggestJava(path, fname, 'cc2')

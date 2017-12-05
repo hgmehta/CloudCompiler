@@ -81,7 +81,7 @@ def guestcompiler():
         _language = request.form['language']
         _input = request.form['input']
         _username = 'guest'
-        response, languages, _, _, exe_time, _suggestion = compile(_code, _language, _username, _input)
+        response, languages, _, _, exe_time, _ ,_suggestion = compile(_code, _language, _username, _input)
         return render_template('_CodeEditor.html',domain = domain,username = 'guest',languages = languages, output = response, code = _code, input = _input, language = _language, executionTime=exe_time, filetype = "None",suggestion="None")
     else:
         languages = retriveLanguages()
@@ -172,13 +172,13 @@ def logged_in(username):
         if "compile" in request.form:
             if 'username' in session:
                 _username = session['username']
-            response, languages, _cStatus, _rStatus, _execution, _suggestion = compile(_code, _language, _username, _input)
+            response, languages, _cStatus, _rStatus, _execution, _mem_usage, _suggestion = compile(_code, _language, _username, _input)
             if _suggestion == "":
                 _suggestion = "None"
             _language = getLanguageFromFileType(_language)
-            insertInActivityLog("-",_language,_cStatus,_rStatus,_execution,"10 KB",session['username'],session['id'])
+            insertInActivityLog("-",_language,_cStatus,_rStatus,_execution,_mem_usage,session['username'],session['id'])
             print "suggestion:",_suggestion,"OK"
-            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = "10 KB", filetype = "None", suggestion = _suggestion)
+            return render_template('_CodeEditor.html',domain = domain,username = session['username'],languages = languages, output = response, code = _code, input = _input, language = _language, executionTime = _execution, memUsage = _mem_usage, filetype = "None", suggestion = _suggestion)
         else:
             _filename = request.form['filename']
             _username = session['username']
@@ -194,7 +194,7 @@ def dashboard(username):
         if session['username'] != username:
             return render_template('404.html',domain = domain, error = "Sorry", h1tag_msg = msg)
         elif session['username'] == username:
-            fileno = getTotalFileNo()
+            fileno = getTotalFileNo(session['username'])
             return render_template('Dashboard.html',domain = domain,username = session['username'], filecount = fileno)
     else:
         return redirect(domain, code=302)

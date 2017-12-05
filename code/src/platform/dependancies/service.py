@@ -21,6 +21,7 @@ def compile(_code, _language, _username, _input):
     response = ""
     _cStatus = ""
     _rStatus = ""
+    suggestion, mem_usage = "", ""
     if result['valid_selection']=="False":
         response = "Please select the language from mentioned ones only"
     else:
@@ -37,10 +38,15 @@ def compile(_code, _language, _username, _input):
                 _cStatus = "1"
                 _rStatus = "1"
                 exe_time = result['execution_time']
+                mem_usage = result['memory_usage']
                 response = result['execution_output']
-    print 'Suggestion :- ', result['suggestion']
-    exe_time = round(float(exe_time),5)
-    return response, languages, _cStatus, _rStatus, str(exe_time), result['suggestion']
+
+        if 'suggestion' in result.keys():
+            suggestion = result['suggestion']
+
+        exe_time = round(float(exe_time),5)
+    print "Memory Usage :- ", mem_usage
+    return response, languages, _cStatus, _rStatus, str(exe_time), str(mem_usage), suggestion
 
 def readfile(_language, _username, _filename):
     ip_address = get_ip_from_filename(_language, _username, _filename)
